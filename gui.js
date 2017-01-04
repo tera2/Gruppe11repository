@@ -60,6 +60,7 @@ function update() {
 }
 
 // request updates with a fixed interval (ms)
+/*
 var intervalID = setInterval(update, 200);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -93,7 +94,156 @@ function showCounter(response) {
 
 function updateText(response) {
 	document.getElementById("mytext").innerHTML = response.value;
+}         
+
+*/
+
+
+
+
+//actually our code...
+
+//could theoretically save input in simple vars
+var location_start = "Hannover";
+var location_destination = "Berlin";
+var location_via = [];
+var traveller_count;
+var time_start, time_destination;
+var break_count, break_time;
+
+var booked_journeys = [];//finished bookings
+//... etc.
+
+
+//---------FUNCTIONS---------//
+
+function setPageStart()
+{
+    var newContent="";
+
+    if(booked_journeys.length > 0){
+        //TODO: add header with currently booked travel info
+    }
+    
+    //add start page buttons
+    newContent=newContent + 
+    '<span style="">' + //could change to different style here as well, i.e. for padding towards the top (to keep button distance the same for with(out) header info) 
+    '<button type="button" class="bigButton" onclick="setPageNewJourney()">Reise Planen</button><br /><br />' +
+    '<button type="button" class="bigButton" onclick="setPagePreviousJourneys()">Letzte Reisen</button><br /><br />' +  
+    '<button type="button" class="bigButton" onclick="setPageProfile()">Profil</button>' +
+    '</span>';
+
+    document.getElementById("content").innerHTML = newContent;
+}
+
+
+function setPageNewJourney(focusDocument="")
+{
+    //content of first page when you start a new journey ("Reise Planen" / "paper1_leer")  
+    var newContent='<p><label>Startort</label>' +
+                   '<input type="text" oninput="setStartLocation(this)" value="'+location_start+'"></p>' +
+                   '<p><label>Zielort</label>' +
+                   '<input type="text" oninput="setDestinationLocation(this)" value="'+location_destination+'"></p>';
+  
+    //add "via" destinations
+    for(i=0; i<location_via.length+1; i++){
+        newContent=newContent + '<p><label>via</label><input type="text" id="via'+i+'" oninput="setViaLocation(this, '+i+')"';
+        if(location_via.length>i && location_via[i].length>0){
+            newContent=newContent + ' value="'+location_via[i]+'"';
+        }
+        newContent=newContent + '></p>';
+    }           
+                   
+    newContent=newContent+ 
+                   '<br /><hr>' +
+                   '<p><label>Anzahl der Reisenden</label>' +
+                   '<input type="text" oninput="setTravellerCount(this)"></p>' +  
+                   '<br /><hr>' +
+                   '<p><label>Abfahrtszeit</label>' +
+                   '<input type="text" oninput="setStartTime(this)"></p>' +
+                   '<p><label>Ankunftszeit</label>' +
+                   '<input type="text" oninput="setDestinationTime(this)"></p>' +
+                   '<br /><hr>' +
+                   '<p><label>Anzahl der Pausen</label>' +
+                   '<input type="text" style="width:5%" oninput="setBreakCount(this)"></p>' +
+                   '<p><label>Pausenlänge</label>' +
+                   '<input type="text" style="width:5%" oninput="setBreakTime(this)"></p>';
+           
+                   
+    //back/next button
+    newContent=newContent+'<br /><br />'+
+                          '<button type="button" class="smallButton" onclick="setPageStart()" style="margin-right:24px">Zurück</button>'+
+                          '<button type="button" class="smallButton" onclick="setPageLuggage()" style="margin-left:24px">Weiter</button>';
+    
+    document.getElementById("content").innerHTML = newContent;
+    
+    if(focusDocument.length>0){//set focus to previous "via" after adding a new line
+      var previousVia=document.getElementById(focusDocument);
+      previousVia.focus();
+      previousVia.setSelectionRange(previousVia.value.length, previousVia.value.length);
+    }
 }
 
 
 
+//TODO: setPagePreviousJourneys(), setPageProfile(), setPageLuggage() and over 9000 other pages
+
+ 
+ 
+                 
+//---INPUT-HELPER-FUNCTIONS---//
+//todo: need sanity checks for only numerical inputs (anzahl der reisenden usw.)
+function setStartLocation(document)
+{
+    location_start=document.value;
+}                
+
+function setDestinationLocation(document)
+{
+    location_destination=document.value;
+}    
+  
+function setViaLocation(document, index)
+{
+    while(location_via.length<=index){
+        location_via.push("");
+    }
+    
+    location_via[index]=document.value;  
+    
+    //add new "via" line
+    var empty_line=false;                     
+    for(i=0; i<location_via.length && empty_line==false; i++){
+        if(location_via[i].length==0){
+            empty_line=true;
+        }
+    }
+    if(empty_line==false){  
+        setPageNewJourney(document.id);
+    }
+}
+                        
+function setTravellerCount(document)
+{
+    traveller_count=document.value;
+} 
+   
+function setStartTime(document)
+{
+    time_start=document.value;//TODO: sanity check & override of destination time
+}
+    
+function setDestinationTime(document)
+{
+    time_destination=document.value;//TODO: sanity check & override of start time
+} 
+   
+function setBreakCount(document)
+{
+    break_count=document.value;
+} 
+   
+function setBreakTime(document)
+{
+    break_time=document.value;
+}    
