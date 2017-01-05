@@ -173,7 +173,7 @@ function setPageNewJourney(focusDocument="")
     //back/next button
     newContent=newContent+'<br /><br />'+
                           '<button type="button" class="smallButton" onclick="setPageStart()" style="margin-right:24px">Zurück</button>'+
-                          '<button type="button" class="smallButton" onclick="setPageLuggage()" style="margin-left:24px">Weiter</button>';
+                          '<button type="button" class="smallButton" onclick="setPageMap()" style="margin-left:24px">Weiter</button>';
     
     document.getElementById("content").innerHTML = newContent;
     
@@ -187,6 +187,24 @@ function setPageNewJourney(focusDocument="")
 
 
 //TODO: setPagePreviousJourneys(), setPageProfile(), setPageLuggage() and over 9000 other pages
+
+function setPageMap(){
+	var newContent = "<iframe <iframe width=" + "600" + " height=" +"450" + " frameborder=" + "0" 
+	+ " src=" +"https://www.google.com/maps/embed?pb=!1m34!1m12!1m3!1d1259737.542931774!2d10.44684633767563!3d51.92620310268749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m19!3e0!4m5!1s0x47b00b514d494f85%3A0x425ac6d94ac4720!2sHannover!3m2!1d52.375891599999996!2d9.7320104!4m5!1s0x47a6f818200f2c73%3A0x93df80d2b9b4f552!2sLeipzig!3m2!1d51.3396955!2d12.3730747!4m5!1s0x47a84e373f035901%3A0x42120465b5e3b70!2sBerlin!3m2!1d52.520006599999995!2d13.404954!5e0!3m2!1sde!2sde!4v1483628183819" 
+	+ " allowfullscreen></iframe>";
+	
+	newContent = newContent + "<label>Abfahrt: "  + time_start + " Uhr " +
+			"Ankunft: "+ time_destination + " Uhr " + "</label>"
+		
+	newContent = newContent + '<br /><br />'+
+                          '<button type="button" class="smallButton" onclick="setPageNewJourney()" style="margin-right:24px">Zurück</button>'+
+                          '<button type="button" class="smallButton" onclick="setPageLuggage()" style="margin-left:24px">Weiter</button>';
+			
+	document.getElementById("content").innerHTML = newContent;
+	
+
+
+}
 
  
  
