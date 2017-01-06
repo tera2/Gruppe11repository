@@ -410,7 +410,7 @@ function sumLuggage(){
 				+'<button type="button" class="smallButton" onclick="" style="margin-right:24px">Kreditkarte</button>'
 				+'<button type="button" class="smallButton" onclick="" style="margin-right:24px">Überweisung</button>'
 				+'<br /><br /><br />'
-				+'<button type="button" class="smallButton" onclick="setPageStart()" style="margin-right:24px">Abbruch</button>'
+				+'<button type="button" class="smallButton" onclick="cancelBooking()" style="margin-right:24px">Abbruch</button>'
 				+'<button type="button" class="smallButton" onclick="confirmBooking()" style="margin-right:24px">Bestätigen</button>';
 	document.getElementById("content").innerHTML = newContent;
  }
@@ -430,6 +430,11 @@ function sumLuggage(){
 function confirmBooking(){
 	var lastjounal = {start : location_start,end_destenation : location_destination, timestart : time_start, timedestination : time_destination };
 	booked_journeys[booked_journeys.length] = lastjounal;
+	reservation = 0;
+	setPageStart();
+}
+
+function cancelBooking(){
 	reservation = 0;
 	setPageStart();
 }
