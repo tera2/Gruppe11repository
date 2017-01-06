@@ -210,8 +210,7 @@ function setPageMap(){
 function setPageBill(){
 	//content of billpage, overview of all prices
 	var newContent="<p><label>Reiseübersicht</label>" +
-			'<button type="button" class="smallButton" onclick="setPageStart()" 
-				style="float: right">Ändern</button></p>' + 
+			'<button type="button" class="smallButton" onclick="setPageStart()" style="float: right">Ändern</button></p>' + 
 			"<p><label>Start: " + location_start + "</label></p>" + 
 			"<p><label>Ziel: " + location_destination + "</label></p>";
 
@@ -224,16 +223,14 @@ function setPageBill(){
 
 	//TODO: Variables for extras like Baggage & Dogbox, etc.
 	newContent=newContent + "<p><label>Gepäck: " + Baggagevalues + " €</label>" +
-			'<button type="button" class="smallButton" onclick="setPageBaggage()" 
-				style="float: right">Ändern</button></p>' + 
+			'<button type="button" class="smallButton" onclick="setPageBaggage()" style="float: right">Ändern</button></p>' + 
 			"<p><label>Fahrräder: " + Bicyclevalues + " €</label></p>" + 
 			"<p><label>Hundebox: " + Dogboxvalues + " €</label></p>" + "<br /><hr>";
 	//Ende von Gepäckextras
 
 	//TODO: Variablen für Zusatzfeatures
 	newContent=newContent + "<p><label>Minibar: " + Minibarvalues + " €</label>" +
-			'<button type="button" class="smallButton" onclick="setPageFEATURES()" 
-				style="float: right">Ändern</button></p>' + 
+			'<button type="button" class="smallButton" onclick="setPageFEATURES()" style="float: right">Ändern</button></p>' + 
 			"<p><label>Steckdosen: " + Plugvalues + " €</label></p>" + 
 			"<p><label>Wlan: " + Wlanvalues + " €</label></p>" + "<br /><hr>";
 	//Ende von Zusatzfeatures
