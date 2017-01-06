@@ -382,7 +382,6 @@ function setPageBill(){
 }
 
 function sum(){
-alert("bla "+(150 + parseFloat(sumLuggage()) + parseFloat(bicycleValues)*PRICE_BICYCLE + parseFloat(skiValues)*PRICE_SKI + parseFloat(surfValues)*PRICE_SKI+ parseFloat(haengerValues) + parseFloat(dogBoxValues)*PRICE_DOGBOX+ parseFloat(wlanValues) + parseFloat(doseValues) /*+ parseFloat(barValues)*PRICE_*/ + parseFloat(fernValues) + parseFloat(privatValues)));
 	return 150 + parseFloat(sumLuggage()) + parseFloat(bicycleValues)*PRICE_BICYCLE + parseFloat(skiValues)*PRICE_SKI + parseFloat(surfValues)*PRICE_SKI + parseFloat(haengerValues) + parseFloat(dogBoxValues)*PRICE_DOGBOX + parseFloat(wlanValues) + parseFloat(doseValues) /*+ parseFloat(barValues)*PRICE_*/ + parseFloat(fernValues) + parseFloat(privatValues);
 }
 
