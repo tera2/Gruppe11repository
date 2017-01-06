@@ -369,7 +369,7 @@ function setPageBill(){
 }
 
 function sum(){
-	return 150 + sumLuggage() + bicycleValues + skiValues +surfValues +haengerValues + dogBoxValues + wlanValues + doseValues + barValues + fernValues + privatValues;
+	return 150 + sumLuggage() + bicycleValues + skiValues + surfValues +haengerValues + dogBoxValues + wlanValues + doseValues + barValues + fernValues + privatValues;
 }
 
 function sumLuggage(){
