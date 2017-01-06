@@ -206,8 +206,49 @@ function setPageMap(){
 
 }
 
- 
- 
+
+function setPageBill(){
+	//content of billpage, overview of all prices
+	var newContent="<p><label>Reiseübersicht</label>" +
+			'<button type="button" class="smallButton" onclick="setPageStart()" 
+				style="float: right">Ändern</button></p>' + 
+			"<p><label>Start: " + location_start + "</label></p>" + 
+			"<p><label>Ziel: " + location_destination + "</label></p>";
+
+	for(i=0; i<location_via.length+1;i++){
+		newContent=newContent + "<p><label>via: " + location_via[i] + "</label></p>";
+	}
+
+	newContent=newContent + "<p><label>Abfahrtszeit: " + time_start + "</label></p>" + 
+		"<p><label>Ankunftszeit: " + time_destination + "</label></p>" + "<br /><hr>";
+
+	//TODO: Variables for extras like Baggage & Dogbox, etc.
+	newContent=newContent + "<p><label>Gepäck: " + Baggagevalues + " €</label>" +
+			'<button type="button" class="smallButton" onclick="setPageBaggage()" 
+				style="float: right">Ändern</button></p>' + 
+			"<p><label>Fahrräder: " + Bicyclevalues + " €</label></p>" + 
+			"<p><label>Hundebox: " + Dogboxvalues + " €</label></p>" + "<br /><hr>";
+	//Ende von Gepäckextras
+
+	//TODO: Variablen für Zusatzfeatures
+	newContent=newContent + "<p><label>Minibar: " + Minibarvalues + " €</label>" +
+			'<button type="button" class="smallButton" onclick="setPageFEATURES()" 
+				style="float: right">Ändern</button></p>' + 
+			"<p><label>Steckdosen: " + Plugvalues + " €</label></p>" + 
+			"<p><label>Wlan: " + Wlanvalues + " €</label></p>" + "<br /><hr>";
+	//Ende von Zusatzfeatures
+
+	newContent=newContent+ "<p><label>Kosten: " + 
+			/*pauschal für jede Reise (150+Gepäckvalues+Featurevalues) + //Rechnung */
+			" €</label></p>" + "<br /><hr>";
+
+	//TODO:Seitennamen anpassen?
+	newContent=newContent+'<br /><br />'+
+                          '<button type="button" class="smallButton" onclick="setPageExtraFeatures()" style="margin-right:24px">Zurück</button>'+
+                          '<button type="button" class="smallButton" onclick="setPagePlatz()" style="margin-left:24px">Weiter</button>';
+}
+
+
                  
 //---INPUT-HELPER-FUNCTIONS---//
 //todo: need sanity checks for only numerical inputs (anzahl der reisenden usw.)
