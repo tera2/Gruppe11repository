@@ -406,13 +406,18 @@ function sumLuggage(){
 				+'<button type="button" class="smallButton" onclick="setResrvation(8)" style="margin-right:24px" id="8">Platz wählen</button>';
 				
 	newContent = newContent +'<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><hr>'
-				+'<button type="button" class="smallButton" onclick="" style="margin-right:24px">Paypal</button>'
-				+'<button type="button" class="smallButton" onclick="" style="margin-right:24px">Kreditkarte</button>'
-				+'<button type="button" class="smallButton" onclick="" style="margin-right:24px">Überweisung</button>'
+				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">Paypal</button>'
+				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">Kreditkarte</button>'
+				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">Überweisung</button>'
 				+'<br /><br /><br />'
 				+'<button type="button" class="smallButton" onclick="cancelBooking()" style="margin-right:24px">Abbruch</button>'
-				+'<button type="button" class="smallButton" onclick="confirmBooking()" style="margin-right:24px">Bestätigen</button>';
+				+'<button type="button" class="smallButton" onclick="confirmBooking()" style="margin-right:24px" id="9" disabled>Bestätigen</button>';
 	document.getElementById("content").innerHTML = newContent;
+ }
+ 
+ function finishBooking(){
+	alert("Bezahlung abgeschlossen.");
+	document.getElementById(9).disabled = false;	
  }
  
  function setResrvation(id){
