@@ -104,8 +104,8 @@ function updateText(response) {
 //actually our code...
 
 //could theoretically save input in simple vars
-var location_start = "Hannover";
-var location_destination = "Berlin";
+var location_start = "";
+var location_destination = "";
 var location_via = [];
 var traveller_count;
 var time_start, time_destination;
@@ -284,9 +284,9 @@ function setPageBaggage(){
 						
             //TODO: SETTER
 						+"<p><label><font size='5'>Sonstiges</font><font size='2'> /Stk. "+PRICE_MISC+",-</font></label>"
-						+"<input type='number' min='0' max='90' value='0'>"
-						+"<input type='number' min='0' max='90' value='0'>"
-						+"<input type='number' min='0' max='90' value='0'> (Maße cm x cm x cm)"
+						+"<input type='number' min='0' max='90' value='0' style = 'width : 5%'>"
+						+"<input type='number' min='0' max='90' value='0' style = 'width : 5%'>"
+						+"<input type='number' min='0' max='90' value='0' style = 'width : 5%'> (Maße cm x cm x cm)"
 						+"</p>"
             
 						
@@ -355,18 +355,27 @@ function setPageBill(){
 	newContent=newContent + "<p><label>Abfahrtszeit: " + time_start + "</label></p>" + 
 		"<p><label>Ankunftszeit: " + time_destination + "</label></p>" + "<br /><hr>";
 
-	//TODO: Variables for extras like Baggage & Dogbox, etc.
-	newContent=newContent + "<p><label>Gepäck: " + sumLuggage() + " €</label>" +
-			'<button type="button" class="smallButton" onclick="setPageBaggage()" style="float: right">Ändern</button></p>' + 
-			"<p><label>Fahrräder: " + bicycleValues*PRICE_BICYCLE + " €</label></p>" + 
-			"<p><label>Hundebox: " + dogBoxValues*PRICE_DOGBOX + " €</label></p>" + "<br /><hr>";
-	//Ende von Gepäckextras
+	//Variables für Zusatzoptionen(Gepäck)
+		newContent=newContent + "<p><label>Gepäck: " + sumLuggage() + " €</label>" +
+				'<button type="button" class="smallButton" onclick="setPageBaggage()" style="float: right">Ändern</button></p>';
+		if(bicycleValues != 0){ newContent=newContent + "<p><label>Fahrräder: " + bicycleValues*PRICE_BICYCLE + " €</label></p>";}
+		if(skiValues != 0) { newContent=newContent + "<p><label>Ski: " + skiValues*PRICE_SKI + " €</label></p>";}
+		if(surfValues != 0) { newContent=newContent + "<p><label>Surfboard: " + surfValues*PRICE_SURF + " €</label></p>";}
+		if(snowValues != 0) { newContent=newContent + "<p><label>Snowboard: " + snowValues*PRICE_SNOW + " €</label></p>";}
+		if(haengerValues != 0) { newContent=newContent + "<p><label>Anhängerkupplung: " + haengerValues + " €</label></p>";}
+		if(dogBoxValues != 0) {newContent=newContent + "<p><label>Hundebox: " + dogBoxValues*PRICE_DOGBOX + " €</label></p>";}
+		newContent=newContent + "<br /><hr>";
+	//Ende von Zusatzoptionen
 
-	//TODO: Variablen für Zusatzfeatures
-	newContent=newContent + "<p label='Bezahlung erfolgt vor Ort in Bar'><label>Minibar: " + (barValues? "Ja" : "Nein") + "</label>" +
-			'<button type="button" class="smallButton" onclick="setPageExtra()" style="float: right">Ändern</button></p>' + 
-			"<p><label>Steckdosen: " + doseValues + " €</label></p>" + 
-			"<p><label>Wlan: " + wlanValues + " €</label></p>" + "<br /><hr>";
+	//Variablen für Zusatzfeatures
+		newContent=newContent + "<p label='Bezahlung erfolgt vor Ort in Bar'><label>Minibar: " + (barValues? "Ja" : "Nein") + "</label>" +
+				'<button type="button" class="smallButton" onclick="setPageExtra()" style="float: right">Ändern</button></p>';
+		if(wlanValues != 0){ newContent=newContent + "<p><label>Wlan: " + wlanValues + " €</label></p>";}
+		if(doseValues != 0){ newContent=newContent + "<p><label>Steckdosen: " + doseValues + " €</label></p>";}
+		if(fernValues != 0){ newContent=newContent + "<p><label>Fernseher: " + fernValues + " €</label></p>";}
+		if(childrenseatValues != 0){ newContent=newContent + "<p><label>Kindersitze: " + childrenseatValues + " Stck. 0 €</label></p>";}
+		if(privatValues != 0){ newContent=newContent + "<p><label>Privatreise: " + privatValues + " €</label></p>";}
+		newContent=newContent + "<br /><hr>";
 	//Ende von Zusatzfeatures
 
 	newContent=newContent+ "<p><label>Kosten: " + 
@@ -374,7 +383,6 @@ function setPageBill(){
 			//pauschal für jede Reise (150+Gepäckvalues+Featurevalues) + //Rechnung 
 			" €</label></p>" + "<br /><hr>";
 
-	//TODO:Seitennamen anpassen?
 	newContent=newContent+'<br /><br />'+
                           '<button type="button" class="smallButton" onclick="setPageExtra()" style="margin-right:24px">Zurück</button>'+
                           '<button type="button" class="smallButton" onclick="setPagePlatz()" style="margin-left:24px">Weiter</button>';
@@ -382,7 +390,7 @@ function setPageBill(){
 }
 
 function sum(){
-	return 150 + parseFloat(sumLuggage()) + parseFloat(bicycleValues)*PRICE_BICYCLE + parseFloat(skiValues)*PRICE_SKI + parseFloat(surfValues)*PRICE_SKI + parseFloat(haengerValues) + parseFloat(dogBoxValues)*PRICE_DOGBOX + parseFloat(wlanValues) + parseFloat(doseValues) /*+ parseFloat(barValues)*PRICE_*/ + parseFloat(fernValues) + parseFloat(privatValues);
+	return 150 + parseFloat(sumLuggage()) + parseFloat(bicycleValues)*PRICE_BICYCLE + parseFloat(skiValues)*PRICE_SKI + parseFloat(snowValues)*PRICE_SNOW + parseFloat(surfValues)*PRICE_SURF + parseFloat(haengerValues) + parseFloat(dogBoxValues)*PRICE_DOGBOX + parseFloat(wlanValues) + parseFloat(doseValues) /*+ parseFloat(barValues)*PRICE_*/ + parseFloat(fernValues) + parseFloat(privatValues);
 }
 
 function sumLuggage(){
@@ -392,7 +400,7 @@ function sumLuggage(){
 //Reservation Page/Booking page
  function setPagePlatz(){
 	var newContent = '';//Todo Fahrzeugauswahl
-	newContent = newContent + 'Wählen sie ihre Plätze aus';
+	newContent = newContent + 'Wählen Sie Ihre Plätze aus';
 	newContent = newContent +'<br />'
 				+'<button type="button" class="smallButton" onclick="setResrvation(1)" style="margin-right:24px" id="1">Platz wählen</button>'
 				+'<button type="button" class="smallButton" onclick="setResrvation(2)" style="margin-right:24px" id="2">Platz wählen</button>'
@@ -551,7 +559,8 @@ function setStartTime(doc)
     }else{ //unblock destination time
 	     document.getElementById("arrivaltime").readOnly=false;   
 	     document.getElementById("arrivaltime").disabled=false;
-    }   
+    }
+	time_destination = '20:00';	
 }
     
 function setDestinationTime(doc)
@@ -563,7 +572,8 @@ function setDestinationTime(doc)
     }else{ //unblock start time
 	     document.getElementById("starttime").readOnly=false;  
 	     document.getElementById("starttime").disabled=false;  
-    }   
+    }
+	time_start = '16:30';	
 } 
    
 function setBreakCount(doc)
