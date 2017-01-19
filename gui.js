@@ -179,14 +179,14 @@ function setPageStart()
 function setPageNewJourney(focusDocument="", skipToBill=false)
 {
     //content of first page when you start a new journey ("Reise Planen" / "paper1_leer")  
-    var newContent='<p><label>Startort</label>' +
+    var newContent='<p><label>Abfahrtsort</label>' +
                    '<input type="text" oninput="setStartLocation(this)" value="'+location_start+'"></p>' +
-                   '<p><label>Zielort</label>' +
+                   '<p><label>Ankunftsort</label>' +
                    '<input type="text" oninput="setDestinationLocation(this)" value="'+location_destination+'"></p>';
   
     //add "via" destinations
     for(i=0; i<location_via.length+1; i++){
-        newContent=newContent + '<p><label>via</label><input type="text" id="via'+i+'" oninput="setViaLocation(this, '+i+')"';
+        newContent=newContent + '<p><label>Zwischenstop</label><input type="text" id="via'+i+'" oninput="setViaLocation(this, '+i+')"';
         if(location_via.length>i && location_via[i].length>0){
             newContent=newContent + ' value="'+location_via[i]+'"';
         }
@@ -322,9 +322,7 @@ function setPageExtra(){
 						+"</p>"
 						
 						+"<p><label><font size='5'>Mini-Bar</font></label>"
-						+"<input type='checkbox' onchange='setBarValues(this)' "+(barValues!=0 ? "checked" : "")+">"
-						
-						
+						+"<input type='checkbox' onchange='setBarValues(this)' "+(barValues!=0 ? "checked" : "")+">"					
 						
 						+"</p>"
 						
@@ -336,9 +334,11 @@ function setPageExtra(){
 						+"<input type='number' oninput='setChildrenseatValues(this)' min='0' max='3' value='"+childrenseatValues+"'>"
 						+"</p>"
 						
-						+"<p><label><font size='5'>Privatreise</font><font size='2'> "+PRICE_PRIVATE+",-</font></label>"
+						+"<p title='Es besteht die Möglichkeit, dass weitere Fahrgäste ihnen der Reise zugeteilt werden. Ihre Reisedauer wird dabei nicht beeinflusst.'><label><font size='5'>Reise veröffentlichen</font><font size='2'> "+PRICE_PRIVATE+",-</font></label>"
 						+"<input type='checkbox' onchange='setPrivateValues(this)' "+(privatValues!=0 ? "checked" : "")+">"
-						+"</p>"			
+						+"</p>"	
+
+					
 						
 	
 	newContent = newContent + '<br /><br />'+
@@ -355,12 +355,12 @@ function setPageExtra(){
 
 function setPageBill(){
 	//content of billpage, overview of all prices
-	var newContent="<p><label>Reiseübersicht</label>" +
+	var newContent="<p><label><h2>Reiseübersicht</h2></label>" +
 			'<button type="button" class="smallButton" onclick="setPageNewJourney(\'\', true)" style="float: right">Ändern</button></p>' + 
 			"<p><label>Start: " + location_start + "</label></p>" + 
 			"<p><label>Ziel: " + location_destination + "</label></p>";
 
-	for(i=0; i<location_via.length+1;i++){
+	for(i=0; i<location_via.length;i++){
 		newContent=newContent + "<p><label>via: " + location_via[i] + "</label></p>";
 	}
 
