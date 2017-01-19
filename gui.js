@@ -143,6 +143,8 @@ const PRICE_SOCKET=2.;
 const PRICE_TV=9.;
 const PRICE_PRIVATE=20.;
 
+const PAGE_MAX=6;
+
 
 //---------FUNCTIONS---------//
 
@@ -169,10 +171,12 @@ function setPageStart()
     '</span>';
 
     document.getElementById("content").innerHTML = newContent;
+    
+    setPageNumber(-1);
 }
 
 
-function setPageNewJourney(focusDocument="")
+function setPageNewJourney(focusDocument="", skipToBill=false)
 {
     //content of first page when you start a new journey ("Reise Planen" / "paper1_leer")  
     var newContent='<p><label>Startort</label>' +
@@ -208,7 +212,7 @@ function setPageNewJourney(focusDocument="")
     //back/next button
     newContent=newContent+'<br /><br />'+
                           '<button type="button" class="smallButton" onclick="setPageStart()" style="margin-right:24px">Zurück</button>'+
-                          '<button type="button" class="smallButton" onclick="setPageMap()" style="margin-left:24px">Weiter</button>';
+                          '<button type="button" class="smallButton" onclick="'+(skipToBill ? 'setPageBill()' : 'setPageMap()')+'" style="margin-left:24px">Weiter</button>';
     
     document.getElementById("content").innerHTML = newContent;
     
@@ -216,7 +220,9 @@ function setPageNewJourney(focusDocument="")
       var previousVia=document.getElementById(focusDocument);
       previousVia.focus();
       previousVia.setSelectionRange(previousVia.value.length, previousVia.value.length);
-    }
+    }   
+    
+    setPageNumber(1);
 }
 
 
@@ -224,21 +230,23 @@ function setPageNewJourney(focusDocument="")
 //TODO: setPagePreviousJourneys(), setPageProfile(), setPageLuggage() and over 9000 other pages
 
 function setPageMap(){
-	var newContent = "<iframe <iframe width=" + "600" + " height=" +"450" + " frameborder=" + "0" 
-	+ " src=" +"https://www.google.com/maps/embed?pb=!1m34!1m12!1m3!1d1259737.542931774!2d10.44684633767563!3d51.92620310268749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m19!3e0!4m5!1s0x47b00b514d494f85%3A0x425ac6d94ac4720!2sHannover!3m2!1d52.375891599999996!2d9.7320104!4m5!1s0x47a6f818200f2c73%3A0x93df80d2b9b4f552!2sLeipzig!3m2!1d51.3396955!2d12.3730747!4m5!1s0x47a84e373f035901%3A0x42120465b5e3b70!2sBerlin!3m2!1d52.520006599999995!2d13.404954!5e0!3m2!1sde!2sde!4v1483628183819" 
-	+ " allowfullscreen></iframe>";
-	
-	newContent = newContent + "<label>Abfahrt: "  + time_start + " Uhr " +
-			"Ankunft: "+ time_destination + " Uhr " + "</label>"
-		
-	newContent = newContent + '<br /><br />'+
-                          '<button type="button" class="smallButton" onclick="setPageNewJourney()" style="margin-right:24px">Zurück</button>'+
-                          '<button type="button" class="smallButton" onclick="setPageBaggage()" style="margin-left:24px">Weiter</button>';
-			
-	document.getElementById("content").innerHTML = newContent;
+  	var newContent = "<iframe <iframe width=" + "600" + " height=" +"450" + " frameborder=" + "0" 
+  	+ " src=" +"https://www.google.com/maps/embed?pb=!1m34!1m12!1m3!1d1259737.542931774!2d10.44684633767563!3d51.92620310268749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m19!3e0!4m5!1s0x47b00b514d494f85%3A0x425ac6d94ac4720!2sHannover!3m2!1d52.375891599999996!2d9.7320104!4m5!1s0x47a6f818200f2c73%3A0x93df80d2b9b4f552!2sLeipzig!3m2!1d51.3396955!2d12.3730747!4m5!1s0x47a84e373f035901%3A0x42120465b5e3b70!2sBerlin!3m2!1d52.520006599999995!2d13.404954!5e0!3m2!1sde!2sde!4v1483628183819" 
+  	+ " allowfullscreen></iframe>";
+  	
+  	newContent = newContent + "<label>Abfahrt: "  + time_start + " Uhr " +
+  			"Ankunft: "+ time_destination + " Uhr " + "</label>"
+  		
+  	newContent = newContent + '<br /><br />'+
+                            '<button type="button" class="smallButton" onclick="setPageNewJourney()" style="margin-right:24px">Zurück</button>'+
+                            '<button type="button" class="smallButton" onclick="setPageBaggage()" style="margin-left:24px">Weiter</button>';
+  			
+  	document.getElementById("content").innerHTML = newContent;    
+     
+    setPageNumber(2);
 }
 
-function setPageBaggage(){
+function setPageBaggage(skipToBill=false){
 	var newContent = 	"<div><h1>Gepäck</h1></div>"					
 						
 						+"<p><label><font size='5'>55 cm</font><font size='2'> /Stk.5,-</font></label>"
@@ -295,9 +303,11 @@ function setPageBaggage(){
 	
 	newContent = newContent + '<br /><br />'+
                           '<button type="button" class="smallButton" onclick="setPageMap()" style="margin-right:24px">Zurück</button>'+
-                          '<button type="button" class="smallButton" onclick="setPageExtra()" style="margin-left:24px">Weiter</button>';
+                          '<button type="button" class="smallButton" onclick="'+(skipToBill ? 'setPageBill()' : 'setPageExtra()')+'" style="margin-left:24px">Weiter</button>';
 			
-	document.getElementById("content").innerHTML = newContent;
+	document.getElementById("content").innerHTML = newContent;  
+  
+    setPageNumber(3);
 }
 
 function setPageExtra(){
@@ -335,7 +345,9 @@ function setPageExtra(){
                           '<button type="button" class="smallButton" onclick="setPageBaggage()" style="margin-right:24px">Zurück</button>'+
                           '<button type="button" class="smallButton" onclick="setPageBill()" style="margin-left:24px">Weiter</button>';
 			
-	document.getElementById("content").innerHTML = newContent;
+	document.getElementById("content").innerHTML = newContent;  
+  
+    setPageNumber(4);
 }
 
 
@@ -344,7 +356,7 @@ function setPageExtra(){
 function setPageBill(){
 	//content of billpage, overview of all prices
 	var newContent="<p><label>Reiseübersicht</label>" +
-			'<button type="button" class="smallButton" onclick="setPageNewJourney()" style="float: right">Ändern</button></p>' + 
+			'<button type="button" class="smallButton" onclick="setPageNewJourney(\'\', true)" style="float: right">Ändern</button></p>' + 
 			"<p><label>Start: " + location_start + "</label></p>" + 
 			"<p><label>Ziel: " + location_destination + "</label></p>";
 
@@ -357,7 +369,7 @@ function setPageBill(){
 
 	//Variables für Zusatzoptionen(Gepäck)
 		newContent=newContent + "<p><label>Gepäck: " + sumLuggage() + " €</label>" +
-				'<button type="button" class="smallButton" onclick="setPageBaggage()" style="float: right">Ändern</button></p>';
+				'<button type="button" class="smallButton" onclick="setPageBaggage(true)" style="float: right">Ändern</button></p>';
 		if(bicycleValues != 0){ newContent=newContent + "<p><label>Fahrräder: " + bicycleValues*PRICE_BICYCLE + " €</label></p>";}
 		if(skiValues != 0) { newContent=newContent + "<p><label>Ski: " + skiValues*PRICE_SKI + " €</label></p>";}
 		if(surfValues != 0) { newContent=newContent + "<p><label>Surfboard: " + surfValues*PRICE_SURF + " €</label></p>";}
@@ -386,7 +398,9 @@ function setPageBill(){
 	newContent=newContent+'<br /><br />'+
                           '<button type="button" class="smallButton" onclick="setPageExtra()" style="margin-right:24px">Zurück</button>'+
                           '<button type="button" class="smallButton" onclick="setPagePlatz()" style="margin-left:24px">Weiter</button>';
-	document.getElementById("content").innerHTML = newContent;
+	document.getElementById("content").innerHTML = newContent;        
+  
+    setPageNumber(5);
 }
 
 function sum(){
@@ -420,7 +434,9 @@ function sumLuggage(){
 				+'<br /><br /><br />'
 				+'<button type="button" class="smallButton" onclick="cancelBooking()" style="margin-right:24px">Abbruch</button>'
 				+'<button type="button" class="smallButton" onclick="confirmBooking()" style="margin-right:24px" id="9" disabled>Bestätigen</button>';
-	document.getElementById("content").innerHTML = newContent;
+	document.getElementById("content").innerHTML = newContent;   
+  
+    setPageNumber(6);
  }
  
  function finishBooking(){
@@ -584,4 +600,14 @@ function setBreakCount(doc)
 function setBreakTime(doc)
 {
     break_time=doc.value;
-}    
+}  
+
+function setPageNumber(pageNum)
+{
+    if(pageNum==-1){//remove number      
+      	document.getElementById("footer").innerHTML = "";  
+    }else{
+        var pContent='<span style="font-size: 14px; font-weight: bold;">'+pageNum+' / '+PAGE_MAX+'</span>';
+      	document.getElementById("footer").innerHTML = pContent;  
+    }
+}  
