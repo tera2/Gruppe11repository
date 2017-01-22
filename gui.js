@@ -174,6 +174,23 @@ function setPageStart()
     
     setPageNumber(-1);
 }
+function setPagePreviousJourneys(){
+	
+}
+function setPageProfile(){
+	var newContent = '<p><h3>Profil</h3></p>'
+					+'<img src="dog.jpg" alt="profilbild" width="180" height="200">'
+					+'<br /><br />'
+					+'<p><label>Name:</label> Max Dogman<br />'
+					+'<label>E-mail:</label> Max.DOG@gmail.com</p><br />'
+					+''
+					+'';
+	
+	newContent=newContent+'<br /><br /><br /><br /><br />'+
+                          '<button type="button" class="smallButton" onclick="setPageStart()" style="margin-right:24px">Zurück</button>';
+                        
+     document.getElementById("content").innerHTML = newContent;
+}
 
 
 function setPageNewJourney(focusDocument="", skipToBill=false)
