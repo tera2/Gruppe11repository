@@ -197,7 +197,7 @@ function setPageNewJourney(focusDocument="", skipToBill=false)
 {
     //content of first page when you start a new journey ("Reise Planen" / "paper1_leer")  
     var newContent='<p><label>Abfahrtsort</label>' +
-                   '<input type="text" oninput="setStartLocation(this)" value="'+location_start+'"></p>' +
+                   '<input type="text" oninput="setStartLocation(this)"  value="'+location_start+'"></p>' +
                    '<p><label>Ankunftsort</label>' +
                    '<input type="text" oninput="setDestinationLocation(this)" value="'+location_destination+'"></p>';
   
@@ -216,55 +216,112 @@ function setPageNewJourney(focusDocument="", skipToBill=false)
                    '<input type="text" oninput="setTravellerCount(this)"></p>' +  
                    '<br /><hr>' +
                    '<p><label>Abfahrtszeit</label>' +
-                   '<input type="text" id="starttime" oninput="setStartTime(this)"></p>' +
+                   '<input type="text" id="starttime" oninput="setStartTime(this)" onchange="setTravelTimeDestination()"></p>' +
                    '<p><label>Ankunftszeit</label>' +
-                   '<input type="text" id="arrivaltime" oninput="setDestinationTime(this)"></p>' +
+                   '<input type="text" id="arrivaltime" oninput="setDestinationTime(this)" onchange="setTravelTimeStart()"></p>' +
                    '<br /><hr>' +
                    '<p><label>Anzahl der Pausen</label>' +
                    '<input type="text" style="width:5%" oninput="setBreakCount(this)"></p>' +
-                   '<p><label>Pausenl‰nge</label>' +
+                   '<p><label>Pausenl√§nge</label>' +
                    '<input type="text" style="width:5%" oninput="setBreakTime(this)"></p>';
            
                    
     //back/next button
     newContent=newContent+'<br /><br />'+
-                          '<button type="button" class="smallButton" onclick="setPageStart()" style="margin-right:24px">Zur¸ck</button>'+
+                          '<button type="button" class="smallButton" onclick="setPageStart()" style="margin-right:24px">Zur√ºck</button>'+
                           '<button type="button" class="smallButton" onclick="'+(skipToBill ? 'setPageBill()' : 'setPageMap()')+'" style="margin-left:24px">Weiter</button>';
     
     document.getElementById("content").innerHTML = newContent;
-    
+	
     if(focusDocument.length>0){//set focus to previous "via" after adding a new line
       var previousVia=document.getElementById(focusDocument);
       previousVia.focus();
       previousVia.setSelectionRange(previousVia.value.length, previousVia.value.length);
     }   
-    
-    setPageNumber(1);
+	
+	setPageNumber(1);
 }
-
 
 
 //TODO: setPagePreviousJourneys(), setPageProfile(), setPageLuggage() and over 9000 other pages
 
 function setPageMap(){
-  	var newContent = "<iframe <iframe width=" + "600" + " height=" +"450" + " frameborder=" + "0" 
+	
+    
+	
+	var newContent = "";
+    
+	
+	newContent += '<div style="height:400px; width:600px; margin: 0 auto;"><div id=map ></div></div>';
+	
+	newContent+= '<div id="travel_times" ><label>Abfahrt: ' + time_start + ' Uhr ' + 'Ankunft: ' + time_destination + ' Uhr </label>' +
+					'</div>';
+	
+	newContent = newContent + '<br /><br />'+
+                            '<button type="button" class="smallButton" onclick="setPageNewJourney()" style="margin-right:24px">Zur√ºck</button>'+
+                            '<button type="button" class="smallButton" onclick="setPageBaggage()" style="margin-left:24px">Weiter</button>';
+  			
+  	document.getElementById("content").innerHTML = newContent;    
+	
+	var map;
+	var mapOptions;
+	var directionsDisplay = new google.maps.DirectionsRenderer();
+	var directionsService = new google.maps.DirectionsService();
+	
+	mapOptions ={
+		center: new google.maps.LatLng(52.375892,9.732010),
+		zoom:4,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+	
+	map = new google.maps.Map(document.getElementById("map"),mapOptions);
+	directionsDisplay.setMap(map);
+
+	var waypoints_array= [];
+	
+	for(var i= 0; i<location_via.length ;i++){
+		waypoints_array.push({
+			location:location_via[i],
+			stopover:true
+		});
+	}
+	
+	
+	var request = {
+		origin:location_start,
+		destination:location_destination,
+		waypoints:waypoints_array,
+		travelMode: google.maps.TravelMode.DRIVING
+	};
+	
+	directionsService.route(request, function(result, status) {
+		if (status == google.maps.DirectionsStatus.OK) {
+			directionsDisplay.setDirections(result);
+		}
+	});
+
+    setPageNumber(2);
+}
+
+
+
+	
+	/*var newContent = "<iframe <iframe width=" + "600" + " height=" +"450" + " frameborder=" + "0" 
   	+ " src=" +"https://www.google.com/maps/embed?pb=!1m34!1m12!1m3!1d1259737.542931774!2d10.44684633767563!3d51.92620310268749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m19!3e0!4m5!1s0x47b00b514d494f85%3A0x425ac6d94ac4720!2sHannover!3m2!1d52.375891599999996!2d9.7320104!4m5!1s0x47a6f818200f2c73%3A0x93df80d2b9b4f552!2sLeipzig!3m2!1d51.3396955!2d12.3730747!4m5!1s0x47a84e373f035901%3A0x42120465b5e3b70!2sBerlin!3m2!1d52.520006599999995!2d13.404954!5e0!3m2!1sde!2sde!4v1483628183819" 
   	+ " allowfullscreen></iframe>";
   	
   	newContent = newContent + "<label>Abfahrt: "  + time_start + " Uhr " +
-  			"Ankunft: "+ time_destination + " Uhr " + "</label>"
+  			"Ankunft: "+ time_destination + " Uhr " + "</label>" 
   		
-  	newContent = newContent + '<br /><br />'+
-                            '<button type="button" class="smallButton" onclick="setPageNewJourney()" style="margin-right:24px">Zur¸ck</button>'+
-                            '<button type="button" class="smallButton" onclick="setPageBaggage()" style="margin-left:24px">Weiter</button>';
-  			
-  	document.getElementById("content").innerHTML = newContent;    
+  	
      
-    setPageNumber(2);
-}
+
+}*/
+
+
 
 function setPageBaggage(skipToBill=false){
-	var newContent = 	"<div><h1>Gep‰ck</h1></div>"					
+	var newContent = 	"<div><h1>Gep√§ck</h1></div>"					
 						
 						+"<p><label><font size='5'>55 cm</font><font size='2'> /Stk.5,-</font></label>"
 						+"<input type='number' oninput='setSmallLuggage(this)' min='0' max='5' value='"+smallLuggage+"'>"
@@ -298,7 +355,7 @@ function setPageBaggage(skipToBill=false){
 						+"<input type='number' oninput='setSnowValues(this)' min='0' max='5' value='"+snowValues+"'>"
 						+"</p>"
 						
-						+"<p><label><font size='5'>Anh‰ngerkupplung</font><font size='2'> /Stk. "+PRICE_COUPLING+",-</font></label>"
+						+"<p><label><font size='5'>Anh√§ngerkupplung</font><font size='2'> /Stk. "+PRICE_COUPLING+",-</font></label>"
 						+"<input type='checkbox' onchange='setHaengerValues(this)' "+(haengerValues!=0 ? "checked" : "")+">"
 						+"</p>"
 						
@@ -311,7 +368,7 @@ function setPageBaggage(skipToBill=false){
 						+"<p><label><font size='5'>Sonstiges</font><font size='2'> /Stk. "+PRICE_MISC+",-</font></label>"
 						+"<input type='number' min='0' max='90' value='0' style = 'width : 5%'>"
 						+"<input type='number' min='0' max='90' value='0' style = 'width : 5%'>"
-						+"<input type='number' min='0' max='90' value='0' style = 'width : 5%'> (Maﬂe cm x cm x cm)"
+						+"<input type='number' min='0' max='90' value='0' style = 'width : 5%'> (Ma√üe cm x cm x cm)"
 						+"</p>"
             
 						
@@ -319,7 +376,7 @@ function setPageBaggage(skipToBill=false){
 						
 	
 	newContent = newContent + '<br /><br />'+
-                          '<button type="button" class="smallButton" onclick="setPageMap()" style="margin-right:24px">Zur¸ck</button>'+
+                          '<button type="button" class="smallButton" onclick="setPageMap()" style="margin-right:24px">Zur√ºck</button>'+
                           '<button type="button" class="smallButton" onclick="'+(skipToBill ? 'setPageBill()' : 'setPageExtra()')+'" style="margin-left:24px">Weiter</button>';
 			
 	document.getElementById("content").innerHTML = newContent;  
@@ -351,7 +408,7 @@ function setPageExtra(){
 						+"<input type='number' oninput='setChildrenseatValues(this)' min='0' max='3' value='"+childrenseatValues+"'>"
 						+"</p>"
 						
-						+"<p title='Es besteht die Mˆglichkeit, dass weitere Fahrg‰ste ihnen der Reise zugeteilt werden. Ihre Reisedauer wird dabei nicht beeinflusst.'><label><font size='5'>Reise verˆffentlichen</font><font size='2'> "+PRICE_PRIVATE+",-</font></label>"
+						+"<p title='Es besteht die M√∂glichkeit, dass weitere Fahrg√§ste ihnen der Reise zugeteilt werden. Ihre Reisedauer wird dabei nicht beeinflusst.'><label><font size='5'>Reise ver√∂ffentlichen</font><font size='2'> "+PRICE_PRIVATE+",-</font></label>"
 						+"<input type='checkbox' onchange='setPrivateValues(this)' "+(privatValues!=0 ? "checked" : "")+">"
 						+"</p>"	
 
@@ -359,7 +416,7 @@ function setPageExtra(){
 						
 	
 	newContent = newContent + '<br /><br />'+
-                          '<button type="button" class="smallButton" onclick="setPageBaggage()" style="margin-right:24px">Zur¸ck</button>'+
+                          '<button type="button" class="smallButton" onclick="setPageBaggage()" style="margin-right:24px">Zur√ºck</button>'+
                           '<button type="button" class="smallButton" onclick="setPageBill()" style="margin-left:24px">Weiter</button>';
 			
 	document.getElementById("content").innerHTML = newContent;  
@@ -372,8 +429,8 @@ function setPageExtra(){
 
 function setPageBill(){
 	//content of billpage, overview of all prices
-	var newContent="<p><label><h2>Reise¸bersicht</h2></label>" +
-			'<button type="button" class="smallButton" onclick="setPageNewJourney(\'\', true)" style="float: right">ƒndern</button></p>' + 
+	var newContent="<p><label><h2>Reise√ºbersicht</h2></label>" +
+			'<button type="button" class="smallButton" onclick="setPageNewJourney(\'\', true)" style="float: right">√Ñndern</button></p>' + 
 			"<p><label>Start: " + location_start + "</label></p>" + 
 			"<p><label>Ziel: " + location_destination + "</label></p>";
 
@@ -384,36 +441,36 @@ function setPageBill(){
 	newContent=newContent + "<p><label>Abfahrtszeit: " + time_start + "</label></p>" + 
 		"<p><label>Ankunftszeit: " + time_destination + "</label></p>" + "<br /><hr>";
 
-	//Variables f¸r Zusatzoptionen(Gep‰ck)
-		newContent=newContent + "<p><label>Gep‰ck: " + sumLuggage() + " Ä</label>" +
-				'<button type="button" class="smallButton" onclick="setPageBaggage(true)" style="float: right">ƒndern</button></p>';
-		if(bicycleValues != 0){ newContent=newContent + "<p><label>Fahrr‰der: " + bicycleValues*PRICE_BICYCLE + " Ä</label></p>";}
-		if(skiValues != 0) { newContent=newContent + "<p><label>Ski: " + skiValues*PRICE_SKI + " Ä</label></p>";}
-		if(surfValues != 0) { newContent=newContent + "<p><label>Surfboard: " + surfValues*PRICE_SURF + " Ä</label></p>";}
-		if(snowValues != 0) { newContent=newContent + "<p><label>Snowboard: " + snowValues*PRICE_SNOW + " Ä</label></p>";}
-		if(haengerValues != 0) { newContent=newContent + "<p><label>Anh‰ngerkupplung: " + haengerValues + " Ä</label></p>";}
-		if(dogBoxValues != 0) {newContent=newContent + "<p><label>Hundebox: " + dogBoxValues*PRICE_DOGBOX + " Ä</label></p>";}
+	//Variables f√ºr Zusatzoptionen(Gep√§ck)
+		newContent=newContent + "<p><label>Gep√§ck: " + sumLuggage() + " ‚Ç¨</label>" +
+				'<button type="button" class="smallButton" onclick="setPageBaggage(true)" style="float: right">√Ñndern</button></p>';
+		if(bicycleValues != 0){ newContent=newContent + "<p><label>Fahrr√§der: " + bicycleValues*PRICE_BICYCLE + " ‚Ç¨</label></p>";}
+		if(skiValues != 0) { newContent=newContent + "<p><label>Ski: " + skiValues*PRICE_SKI + " ‚Ç¨</label></p>";}
+		if(surfValues != 0) { newContent=newContent + "<p><label>Surfboard: " + surfValues*PRICE_SURF + " ‚Ç¨</label></p>";}
+		if(snowValues != 0) { newContent=newContent + "<p><label>Snowboard: " + snowValues*PRICE_SNOW + " ‚Ç¨</label></p>";}
+		if(haengerValues != 0) { newContent=newContent + "<p><label>Anh√§ngerkupplung: " + haengerValues + " ‚Ç¨</label></p>";}
+		if(dogBoxValues != 0) {newContent=newContent + "<p><label>Hundebox: " + dogBoxValues*PRICE_DOGBOX + " ‚Ç¨</label></p>";}
 		newContent=newContent + "<br /><hr>";
 	//Ende von Zusatzoptionen
 
-	//Variablen f¸r Zusatzfeatures
+	//Variablen f√ºr Zusatzfeatures
 		newContent=newContent + "<p label='Bezahlung erfolgt vor Ort in Bar'><label>Minibar: " + (barValues? "Ja" : "Nein") + "</label>" +
-				'<button type="button" class="smallButton" onclick="setPageExtra()" style="float: right">ƒndern</button></p>';
-		if(wlanValues != 0){ newContent=newContent + "<p><label>Wlan: " + wlanValues + " Ä</label></p>";}
-		if(doseValues != 0){ newContent=newContent + "<p><label>Steckdosen: " + doseValues + " Ä</label></p>";}
-		if(fernValues != 0){ newContent=newContent + "<p><label>Fernseher: " + fernValues + " Ä</label></p>";}
-		if(childrenseatValues != 0){ newContent=newContent + "<p><label>Kindersitze: " + childrenseatValues + " Stck. 0 Ä</label></p>";}
-		if(privatValues != 0){ newContent=newContent + "<p><label>Privatreise: " + privatValues + " Ä</label></p>";}
+				'<button type="button" class="smallButton" onclick="setPageExtra()" style="float: right">√Ñndern</button></p>';
+		if(wlanValues != 0){ newContent=newContent + "<p><label>Wlan: " + wlanValues + " ‚Ç¨</label></p>";}
+		if(doseValues != 0){ newContent=newContent + "<p><label>Steckdosen: " + doseValues + " ‚Ç¨</label></p>";}
+		if(fernValues != 0){ newContent=newContent + "<p><label>Fernseher: " + fernValues + " ‚Ç¨</label></p>";}
+		if(childrenseatValues != 0){ newContent=newContent + "<p><label>Kindersitze: " + childrenseatValues + " Stck. 0 ‚Ç¨</label></p>";}
+		if(privatValues != 0){ newContent=newContent + "<p><label>Privatreise: " + privatValues + " ‚Ç¨</label></p>";}
 		newContent=newContent + "<br /><hr>";
 	//Ende von Zusatzfeatures
 
 	newContent=newContent+ "<p><label>Kosten: " + 
 			sum() +
-			//pauschal f¸r jede Reise (150+Gep‰ckvalues+Featurevalues) + //Rechnung 
-			" Ä</label></p>" + "<br /><hr>";
+			//pauschal f√ºr jede Reise (150+Gep√§ckvalues+Featurevalues) + //Rechnung 
+			" ‚Ç¨</label></p>" + "<br /><hr>";
 
 	newContent=newContent+'<br /><br />'+
-                          '<button type="button" class="smallButton" onclick="setPageExtra()" style="margin-right:24px">Zur¸ck</button>'+
+                          '<button type="button" class="smallButton" onclick="setPageExtra()" style="margin-right:24px">Zur√ºck</button>'+
                           '<button type="button" class="smallButton" onclick="setPagePlatz()" style="margin-left:24px">Weiter</button>';
 	document.getElementById("content").innerHTML = newContent;        
   
@@ -431,26 +488,26 @@ function sumLuggage(){
 //Reservation Page/Booking page
  function setPagePlatz(){
 	var newContent = '';//Todo Fahrzeugauswahl
-	newContent = newContent + 'W‰hlen Sie Ihre Pl‰tze aus';
+	newContent = newContent + 'W√§hlen Sie Ihre Pl√§tze aus';
 	newContent = newContent +'<br />'
-				+'<button type="button" class="smallButton" onclick="setResrvation(1)" style="margin-right:24px" id="1">Platz w‰hlen</button>'
-				+'<button type="button" class="smallButton" onclick="setResrvation(2)" style="margin-right:24px" id="2">Platz w‰hlen</button>'
-				+'<button type="button" class="smallButton" onclick="setResrvation(3)" style="margin-right:24px" id="3">Platz w‰hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(1)" style="margin-right:24px" id="1">Platz w√§hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(2)" style="margin-right:24px" id="2">Platz w√§hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(3)" style="margin-right:24px" id="3">Platz w√§hlen</button>'
 				+'<br />'
-				+'<button type="button" class="smallButton" onclick="setResrvation(4)" style="margin-right:24px" id="4">Platz w‰hlen</button>'
-				+'<button type="button" class="smallButton" onclick="setResrvation(5)" style="margin-right:24px" id="5">Platz w‰hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(4)" style="margin-right:24px" id="4">Platz w√§hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(5)" style="margin-right:24px" id="5">Platz w√§hlen</button>'
 				+'<br />'
-				+'<button type="button" class="smallButton" onclick="setResrvation(6)" style="margin-right:24px" id="6">Platz w‰hlen</button>'
-				+'<button type="button" class="smallButton" onclick="setResrvation(7)" style="margin-right:24px" id="7">Platz w‰hlen</button>'
-				+'<button type="button" class="smallButton" onclick="setResrvation(8)" style="margin-right:24px" id="8">Platz w‰hlen</button>';
+				+'<button type="button" class="smallButton" onclick="setResrvation(6)" style="margin-right:24px" id="6">Platz w√§hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(7)" style="margin-right:24px" id="7">Platz w√§hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(8)" style="margin-right:24px" id="8">Platz w√§hlen</button>';
 				
 	newContent = newContent +'<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><hr>'
 				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">Paypal</button>'
 				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">Kreditkarte</button>'
-				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">‹berweisung</button>'
+				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">√úberweisung</button>'
 				+'<br /><br /><br />'
 				+'<button type="button" class="smallButton" onclick="cancelBooking()" style="margin-right:24px">Abbruch</button>'
-				+'<button type="button" class="smallButton" onclick="confirmBooking()" style="margin-right:24px" id="9" disabled>Best‰tigen</button>';
+				+'<button type="button" class="smallButton" onclick="confirmBooking()" style="margin-right:24px" id="9" disabled>Best√§tigen</button>';
 	document.getElementById("content").innerHTML = newContent;   
   
     setPageNumber(6);
@@ -483,6 +540,92 @@ function confirmBooking(){
 function cancelBooking(){
 	reservation = 0;
 	setPageStart();
+}
+
+function setTravelTimeDestination(){
+	var directionsService = new google.maps.DirectionsService();
+	var duration_traveltime;
+	
+	var date = new Date();
+	date.setHours(time_start.substring(0,2), time_start.substring(3,5)); 
+	
+	
+	var waypoints_array= [];
+	
+	for(var i= 0; i<location_via.length ;i++){
+		waypoints_array.push({
+			location:location_via[i],
+			stopover:true
+		});
+	}
+	
+	var request = {
+			origin:location_start,
+			destination:location_destination,
+			waypoints:waypoints_array,
+			travelMode: google.maps.TravelMode.DRIVING
+		};		
+			
+		directionsService.route(request, function(result, status) {
+			if (status == google.maps.DirectionsStatus.OK) {
+				var duration_in_sec = result.routes[0].legs[0].duration.value;
+				date.setMinutes( date.getMinutes() + duration_in_sec/60 );
+				
+				var minutes;
+				
+				if( date.getMinutes().toString().length == 1){
+					minutes = '0' + date.getMinutes().toString();
+				}else minutes = date.getMinutes().toString();
+				
+				time_destination = date.getHours() + ':' + minutes;	
+				
+				document.getElementById("arrivaltime").value= date.getHours() + ':' + minutes;	
+			}else { alert("Directions failed: "+status); }
+		});	
+}
+
+function setTravelTimeStart(){
+	var directionsService = new google.maps.DirectionsService();
+	var duration_traveltime;
+	
+	var date = new Date();
+	date.setHours(time_destination.substring(0,2), time_destination.substring(3,5)); 
+	
+	
+	var waypoints_array= [];
+	
+	for(var i= 0; i<location_via.length ;i++){
+		waypoints_array.push({
+			location:location_via[i],
+			stopover:true
+		});
+	}
+	
+	var request = {
+			origin:location_start,
+			destination:location_destination,
+			waypoints:waypoints_array,
+			travelMode: google.maps.TravelMode.DRIVING
+		};		
+			
+		directionsService.route(request, function(result, status) {
+			if (status == google.maps.DirectionsStatus.OK) {
+				var duration_in_sec = result.routes[0].legs[0].duration.value;
+				date.setMinutes( date.getMinutes() - duration_in_sec/60 );
+				
+				var minutes;
+				
+				if( date.getMinutes().toString().length == 1){
+					minutes = '0' + date.getMinutes().toString();
+				}else minutes = date.getMinutes().toString();
+				
+				time_start = date.getHours() + ':' + minutes;;
+				
+				document.getElementById("starttime").value = date.getHours() + ':' + minutes;
+			}else { alert("Directions failed: "+status); }
+		});	
+		
+	
 }
                  
 //---INPUT-HELPER-FUNCTIONS---//
