@@ -107,9 +107,11 @@ function updateText(response) {
 var location_start = "";
 var location_destination = "";
 var location_via = [];
-var traveller_count;
-var time_start, time_destination;
-var break_count, break_time;
+var traveller_count = "";
+var time_start = ""; 
+var time_destination = "";
+var break_count = 0;
+var break_time = 0;
 
 var booked_journeys = [];//finished bookings
 var reservation = 0;
@@ -222,14 +224,14 @@ function setPageNewJourney(focusDocument="", skipToBill=false)
                    '<br /><hr>' +
                    '<p><label>Anzahl der Pausen</label>' +
                    '<input type="text" style="width:5%" oninput="setBreakCount(this)"></p>' +
-                   '<p><label>PausenlÃ¤nge</label>' +
+                   '<p><label>Pausenlänge</label>' +
                    '<input type="text" style="width:5%" oninput="setBreakTime(this)"></p>';
            
                    
     //back/next button
     newContent=newContent+'<br /><br />'+
-                          '<button type="button" class="smallButton" onclick="setPageStart()" style="margin-right:24px">ZurÃ¼ck</button>'+
-                          '<button type="button" class="smallButton" onclick="'+(skipToBill ? 'setPageBill()' : 'setPageMap()')+'" style="margin-left:24px">Weiter</button>';
+                          '<button type="button" class="smallButton" onclick="setPageStart()" style="margin-right:24px">Zurück</button>'+
+                          '<button type="button" class="smallButton" onclick="checkInput('+skipToBill+')" style="margin-left:24px">Weiter</button>';
     
     document.getElementById("content").innerHTML = newContent;
 	
@@ -240,6 +242,41 @@ function setPageNewJourney(focusDocument="", skipToBill=false)
     }   
 	
 	setPageNumber(1);
+}
+
+function checkInput(skipToBill){
+	var nextPage = true;
+	var error = "";
+	if(location_start == ""){
+		error += 'Abfahrtsort nicht angegeben\n';
+		nextPage = false;
+	}
+	if(location_destination == ""){
+		error += 'Ankunftsort nicht angegeben\n';
+		nextPage = false;
+	}
+	if(traveller_count == ""){
+		error += 'Anzahl der Person nicht angegeben\n';
+		nextPage = false;		
+	}
+	if(time_start == ""){
+		error += 'Abfahrtszeit nicht angegeben\n';
+		nextPage = false;		
+	}
+	if(time_destination == ""){
+		error += 'Ankunftszeit nicht angegeben\n';
+		nextPage = false;		
+	}
+	if(nextPage == true){
+		if(skipToBill == true){
+			setPageBill();
+		}else{
+			setPageMap();
+		}
+	}else{
+		
+		alert(error);
+	}
 }
 
 
@@ -434,7 +471,7 @@ function setPageBill(){
 			"<p><label>Start: " + location_start + "</label></p>" + 
 			"<p><label>Ziel: " + location_destination + "</label></p>";
 
-	for(i=0; i<location_via.length;i++){
+	for(i=0; i<location_via.length ;i++){
 		newContent=newContent + "<p><label>via: " + location_via[i] + "</label></p>";
 	}
 
