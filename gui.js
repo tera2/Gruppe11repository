@@ -178,8 +178,28 @@ function setPageStart()
     setPageNumber(-1);
 }
 function setPagePreviousJourneys(){
-	
+	var newContent = '<p><h3>Letzte Reisen</h3></p>'
+	if(booked_journeys.length == 0){
+		newContent = newContent + '<label>Keine alten Reisen</label><br /><br />';
+	}else{
+		for(i=0; i <booked_journeys.length ; i++){
+					newContent = newContent +'Reise von '+booked_journeys[i].start+' nach '+booked_journeys[i].end_destenation+'<br>'+
+					'Abfahrt um '+booked_journeys[i].timestart+' und Ankunft um '+booked_journeys[i].timedestination+'<br>';
+					newContent = newContent + '<button type="button" class="smallButton" onclick="bookOldJouney('+i+')" style="margin-right:24px">Reise erneut buchen</button>'
+					newContent = newContent+ '<br /><br />';
+		}
+		newContent = newContent + '<br /><br />';
+	}
+	newContent = newContent + '<button type="button" class="smallButton" onclick="setPageStart()" style="margin-right:24px">Zurück</button>';
+	document.getElementById("content").innerHTML = newContent;
 }
+
+function bookOldJouney(count){
+	location_start = booked_journeys[count].start;
+	location_destination = booked_journeys[count].end_destenation;
+	setPageNewJourney();
+}
+
 function setPageProfile(){
 	var newContent = '<p><h3>Profil</h3></p>'
 					+'<img src="dog.jpg" alt="profilbild" width="180" height="200">'
@@ -545,7 +565,7 @@ function sumLuggage(){
 				+'<label>Bezahlmethode wählen:</label><br>'
 				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">Paypal</button>'
 				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">Kreditkarte</button>'
-				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">Ãœberweisung</button>'
+				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">Überweisung</button>'
 				+'<br /><br /><br />'
 				+'<button type="button" class="smallButton" onclick="cancelBooking()" style="margin-right:24px">Abbruch</button>'
 				+'<button type="button" class="smallButton" onclick="confirmBooking()" style="margin-right:24px" id="9" disabled>Bestätigen</button>';
@@ -572,7 +592,7 @@ function sumLuggage(){
 	}
  }
 function confirmBooking(){
-	var lastjounal = {start : location_start,end_destenation : location_destination, timestart : time_start, timedestination : time_destination };
+	var lastjounal = {start : location_start,end_destenation : location_destination, timestart : time_start, timedestination : time_destination};
 	booked_journeys[booked_journeys.length] = lastjounal;
 	reservation = 0;
 	setPageStart();
@@ -784,6 +804,7 @@ function setStartTime(doc)
 	     document.getElementById("arrivaltime").disabled=false;
     }
 	time_destination = '20:00';	
+	
 }
     
 function setDestinationTime(doc)
