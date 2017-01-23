@@ -227,7 +227,7 @@ function setPageNewJourney(focusDocument="", skipToBill=false)
                    '<br /><hr>' +
                    '<p><label>Anzahl der Pausen</label>' +
                    '<input type="text" style="width:5%" oninput="setBreakCount(this)"></p>' +
-                   '<p><label>Pausenlänge</label>' +
+                   "<p><label>Pausenlänge<font size='2'> in min</font></label>" +
                    '<input type="text" style="width:5%" oninput="setBreakTime(this)"></p>';
            
                    
@@ -408,7 +408,7 @@ function setPageBaggage(skipToBill=false){
 						+"<p><label><font size='5'>Sonstiges</font><font size='2'> /Stk. "+PRICE_MISC+",-</font></label>"
 						+"<input type='number' min='0' max='90' value='0' style = 'width : 5%'>"
 						+"<input type='number' min='0' max='90' value='0' style = 'width : 5%'>"
-						+"<input type='number' min='0' max='90' value='0' style = 'width : 5%'> (MaÃŸe cm x cm x cm)"
+						+"<input type='number' min='0' max='90' value='0' style = 'width : 5%'> (Maße cm x cm x cm)"
 						+"</p>"
             
 						
@@ -448,7 +448,7 @@ function setPageExtra(){
 						+"<input type='number' oninput='setChildrenseatValues(this)' min='0' max='3' value='"+childrenseatValues+"'>"
 						+"</p>"*/
 						
-						+"<p title='Es besteht die MÃ¶glichkeit, dass weitere Fahrgäste ihnen der Reise zugeteilt werden. Ihre Reisedauer wird dabei nicht beeinflusst.'><label><font size='5'>Reise verÃ¶ffentlichen</font><font size='2'> "+PRICE_PRIVATE+",-</font></label>"
+						+"<p title='Es besteht die Möglichkeit, dass weitere Fahrgäste ihnen der Reise zugeteilt werden. Ihre Reisedauer wird dabei nicht beeinflusst.'><label><font size='5'>Reise veröffentlichen</font><font size='2'> "+PRICE_PRIVATE+",-</font></label>"
 						+"<input type='checkbox' onchange='setPrivateValues(this)' "+(privatValues!=0 ? "checked" : "")+">"
 						+"</p>"	
 
@@ -482,7 +482,7 @@ function setPageBill(){
 		"<p><label>Ankunftszeit: " + time_destination + "</label></p>" + "<br /><hr>";
 
 	//Variables für Zusatzoptionen(Gepäck)
-		newContent=newContent + "<p><label>Gepäck: " + sumLuggage() + " €¬</label>" +
+		newContent=newContent + "<p><label>Gepäck: " + sumLuggage() + " €</label>" +
 				'<button type="button" class="smallButton" onclick="setPageBaggage(true)" style="float: right">Ändern</button></p>';
 		if(bicycleValues != 0){ newContent=newContent + "<p><label>Fahrräder: " + bicycleValues*PRICE_BICYCLE + " €</label></p>";}
 		if(skiValues != 0) { newContent=newContent + "<p><label>Ski: " + skiValues*PRICE_SKI + " €</label></p>";}
@@ -499,7 +499,7 @@ function setPageBill(){
 		if(wlanValues != 0){ newContent=newContent + "<p><label>Wlan: " + wlanValues + " €</label></p>";}
 		if(doseValues != 0){ newContent=newContent + "<p><label>Steckdosen: " + doseValues + " €</label></p>";}
 		if(fernValues != 0){ newContent=newContent + "<p><label>Fernseher: " + fernValues + " €</label></p>";}
-		if(childrenseatValues != 0){ newContent=newContent + "<p><label>Kindersitze: " + childrenseatValues + " Stck. 0 €¬</label></p>";}
+		if(childrenseatValues != 0){ newContent=newContent + "<p><label>Kindersitze: " + childrenseatValues + " Stck. 0 €</label></p>";}
 		if(privatValues != 0){ newContent=newContent + "<p><label>Privatreise: " + privatValues + " €</label></p>";}
 		newContent=newContent + "<br /><hr>";
 	//Ende von Zusatzfeatures
@@ -507,7 +507,7 @@ function setPageBill(){
 	newContent=newContent+ "<p><label>Kosten: " + 
 			sum() +
 			//pauschal für jede Reise (150+Gepäckvalues+Featurevalues) + //Rechnung 
-			" €¬</label></p>" + "<br /><hr>";
+			" €</label></p>" + "<br /><hr>";
 
 	newContent=newContent+'<br /><br />'+
                           '<button type="button" class="smallButton" onclick="setPageExtra()" style="margin-right:24px">Zurück</button>'+
@@ -542,6 +542,7 @@ function sumLuggage(){
 				+'<button type="button" class="smallButton" onclick="setResrvation(8)" style="margin-right:24px" id="8">Platz wählen</button>';
 				
 	newContent = newContent +'<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><hr>'
+				+'<label>Bezahlmethode wählen:</label><br>'
 				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">Paypal</button>'
 				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">Kreditkarte</button>'
 				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">Ãœberweisung</button>'
