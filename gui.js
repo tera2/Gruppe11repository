@@ -108,6 +108,7 @@ var location_start = "";
 var location_destination = "";
 var location_via = [];
 var traveller_count = "";
+var traveller_count_kids = 0;
 var time_start = ""; 
 var time_destination = "";
 var break_count = 0;
@@ -214,8 +215,10 @@ function setPageNewJourney(focusDocument="", skipToBill=false)
                    
     newContent=newContent+ 
                    '<br /><hr>' +
-                   '<p><label>Anzahl der Reisenden</label>' +
-                   '<input type="text" oninput="setTravellerCount(this)"></p>' +  
+                   '<p><label>Anzahl der Reisenden ¸ber 12</label>' +
+                   '<input type="text" oninput="setTravellerCount(this)"></p>' + 
+				   '<p><label>Anzahl der Reisenden unter 12</label>' +
+                   '<input type="text" oninput="setTravellerCountKids(this)"></p>' + 
                    '<br /><hr>' +
                    '<p><label>Abfahrtszeit</label>' +
                    '<input type="text" id="starttime" oninput="setStartTime(this)" onchange="setTravelTimeDestination()"></p>' +
@@ -295,7 +298,7 @@ function setPageMap(){
 					'</div>';
 	
 	newContent = newContent + '<br /><br />'+
-                            '<button type="button" class="smallButton" onclick="setPageNewJourney()" style="margin-right:24px">Zur√ºck</button>'+
+                            '<button type="button" class="smallButton" onclick="setPageNewJourney()" style="margin-right:24px">Zur¸ck</button>'+
                             '<button type="button" class="smallButton" onclick="setPageBaggage()" style="margin-left:24px">Weiter</button>';
   			
   	document.getElementById("content").innerHTML = newContent;    
@@ -358,7 +361,7 @@ function setPageMap(){
 
 
 function setPageBaggage(skipToBill=false){
-	var newContent = 	"<div><h1>Gep√§ck</h1></div>"					
+	var newContent = 	"<div><h1>Gep‰ck</h1></div>"					
 						
 						+"<p><label><font size='5'>55 cm</font><font size='2'> /Stk.5,-</font></label>"
 						+"<input type='number' oninput='setSmallLuggage(this)' min='0' max='5' value='"+smallLuggage+"'>"
@@ -392,7 +395,7 @@ function setPageBaggage(skipToBill=false){
 						+"<input type='number' oninput='setSnowValues(this)' min='0' max='5' value='"+snowValues+"'>"
 						+"</p>"
 						
-						+"<p><label><font size='5'>Anh√§ngerkupplung</font><font size='2'> /Stk. "+PRICE_COUPLING+",-</font></label>"
+						+"<p><label><font size='5'>Anh‰ngerkupplung</font><font size='2'> /Stk. "+PRICE_COUPLING+",-</font></label>"
 						+"<input type='checkbox' onchange='setHaengerValues(this)' "+(haengerValues!=0 ? "checked" : "")+">"
 						+"</p>"
 						
@@ -413,7 +416,7 @@ function setPageBaggage(skipToBill=false){
 						
 	
 	newContent = newContent + '<br /><br />'+
-                          '<button type="button" class="smallButton" onclick="setPageMap()" style="margin-right:24px">Zur√ºck</button>'+
+                          '<button type="button" class="smallButton" onclick="setPageMap()" style="margin-right:24px">Zur¸ck</button>'+
                           '<button type="button" class="smallButton" onclick="'+(skipToBill ? 'setPageBill()' : 'setPageExtra()')+'" style="margin-left:24px">Weiter</button>';
 			
 	document.getElementById("content").innerHTML = newContent;  
@@ -441,11 +444,11 @@ function setPageExtra(){
 						+"<input type='checkbox' onchange='setFernValues(this)' "+(fernValues!=0 ? "checked" : "")+">"
 						+"</p>"
 						
-						+"<p><label><font size='5'>Kindersitze</font><font size='2'> /Stk. 0,-</font></label>"
+						/*+"<p><label><font size='5'>Kindersitze</font><font size='2'> /Stk. 0,-</font></label>"
 						+"<input type='number' oninput='setChildrenseatValues(this)' min='0' max='3' value='"+childrenseatValues+"'>"
-						+"</p>"
+						+"</p>"*/
 						
-						+"<p title='Es besteht die M√∂glichkeit, dass weitere Fahrg√§ste ihnen der Reise zugeteilt werden. Ihre Reisedauer wird dabei nicht beeinflusst.'><label><font size='5'>Reise ver√∂ffentlichen</font><font size='2'> "+PRICE_PRIVATE+",-</font></label>"
+						+"<p title='Es besteht die M√∂glichkeit, dass weitere Fahrg‰ste ihnen der Reise zugeteilt werden. Ihre Reisedauer wird dabei nicht beeinflusst.'><label><font size='5'>Reise ver√∂ffentlichen</font><font size='2'> "+PRICE_PRIVATE+",-</font></label>"
 						+"<input type='checkbox' onchange='setPrivateValues(this)' "+(privatValues!=0 ? "checked" : "")+">"
 						+"</p>"	
 
@@ -453,7 +456,7 @@ function setPageExtra(){
 						
 	
 	newContent = newContent + '<br /><br />'+
-                          '<button type="button" class="smallButton" onclick="setPageBaggage()" style="margin-right:24px">Zur√ºck</button>'+
+                          '<button type="button" class="smallButton" onclick="setPageBaggage()" style="margin-right:24px">Zur¸ck</button>'+
                           '<button type="button" class="smallButton" onclick="setPageBill()" style="margin-left:24px">Weiter</button>';
 			
 	document.getElementById("content").innerHTML = newContent;  
@@ -466,8 +469,8 @@ function setPageExtra(){
 
 function setPageBill(){
 	//content of billpage, overview of all prices
-	var newContent="<p><label><h2>Reise√ºbersicht</h2></label>" +
-			'<button type="button" class="smallButton" onclick="setPageNewJourney(\'\', true)" style="float: right">√Ñndern</button></p>' + 
+	var newContent="<p><label><h2>Reise¸bersicht</h2></label>" +
+			'<button type="button" class="smallButton" onclick="setPageNewJourney(\'\', true)" style="float: right">ƒndern</button></p>' + 
 			"<p><label>Start: " + location_start + "</label></p>" + 
 			"<p><label>Ziel: " + location_destination + "</label></p>";
 
@@ -478,36 +481,36 @@ function setPageBill(){
 	newContent=newContent + "<p><label>Abfahrtszeit: " + time_start + "</label></p>" + 
 		"<p><label>Ankunftszeit: " + time_destination + "</label></p>" + "<br /><hr>";
 
-	//Variables f√ºr Zusatzoptionen(Gep√§ck)
-		newContent=newContent + "<p><label>Gep√§ck: " + sumLuggage() + " ‚Ç¨</label>" +
-				'<button type="button" class="smallButton" onclick="setPageBaggage(true)" style="float: right">√Ñndern</button></p>';
-		if(bicycleValues != 0){ newContent=newContent + "<p><label>Fahrr√§der: " + bicycleValues*PRICE_BICYCLE + " ‚Ç¨</label></p>";}
-		if(skiValues != 0) { newContent=newContent + "<p><label>Ski: " + skiValues*PRICE_SKI + " ‚Ç¨</label></p>";}
-		if(surfValues != 0) { newContent=newContent + "<p><label>Surfboard: " + surfValues*PRICE_SURF + " ‚Ç¨</label></p>";}
-		if(snowValues != 0) { newContent=newContent + "<p><label>Snowboard: " + snowValues*PRICE_SNOW + " ‚Ç¨</label></p>";}
-		if(haengerValues != 0) { newContent=newContent + "<p><label>Anh√§ngerkupplung: " + haengerValues + " ‚Ç¨</label></p>";}
-		if(dogBoxValues != 0) {newContent=newContent + "<p><label>Hundebox: " + dogBoxValues*PRICE_DOGBOX + " ‚Ç¨</label></p>";}
+	//Variables f¸r Zusatzoptionen(Gep‰ck)
+		newContent=newContent + "<p><label>Gep‰ck: " + sumLuggage() + " Ä¨</label>" +
+				'<button type="button" class="smallButton" onclick="setPageBaggage(true)" style="float: right">ƒndern</button></p>';
+		if(bicycleValues != 0){ newContent=newContent + "<p><label>Fahrr‰der: " + bicycleValues*PRICE_BICYCLE + " Ä</label></p>";}
+		if(skiValues != 0) { newContent=newContent + "<p><label>Ski: " + skiValues*PRICE_SKI + " Ä</label></p>";}
+		if(surfValues != 0) { newContent=newContent + "<p><label>Surfboard: " + surfValues*PRICE_SURF + " Ä</label></p>";}
+		if(snowValues != 0) { newContent=newContent + "<p><label>Snowboard: " + snowValues*PRICE_SNOW + " Ä</label></p>";}
+		if(haengerValues != 0) { newContent=newContent + "<p><label>Anh‰ngerkupplung: " + haengerValues + " Ä</label></p>";}
+		if(dogBoxValues != 0) {newContent=newContent + "<p><label>Hundebox: " + dogBoxValues*PRICE_DOGBOX + " Ä</label></p>";}
 		newContent=newContent + "<br /><hr>";
 	//Ende von Zusatzoptionen
 
-	//Variablen f√ºr Zusatzfeatures
+	//Variablen f¸r Zusatzfeatures
 		newContent=newContent + "<p label='Bezahlung erfolgt vor Ort in Bar'><label>Minibar: " + (barValues? "Ja" : "Nein") + "</label>" +
-				'<button type="button" class="smallButton" onclick="setPageExtra()" style="float: right">√Ñndern</button></p>';
-		if(wlanValues != 0){ newContent=newContent + "<p><label>Wlan: " + wlanValues + " ‚Ç¨</label></p>";}
-		if(doseValues != 0){ newContent=newContent + "<p><label>Steckdosen: " + doseValues + " ‚Ç¨</label></p>";}
-		if(fernValues != 0){ newContent=newContent + "<p><label>Fernseher: " + fernValues + " ‚Ç¨</label></p>";}
-		if(childrenseatValues != 0){ newContent=newContent + "<p><label>Kindersitze: " + childrenseatValues + " Stck. 0 ‚Ç¨</label></p>";}
-		if(privatValues != 0){ newContent=newContent + "<p><label>Privatreise: " + privatValues + " ‚Ç¨</label></p>";}
+				'<button type="button" class="smallButton" onclick="setPageExtra()" style="float: right">ƒndern</button></p>';
+		if(wlanValues != 0){ newContent=newContent + "<p><label>Wlan: " + wlanValues + " Ä</label></p>";}
+		if(doseValues != 0){ newContent=newContent + "<p><label>Steckdosen: " + doseValues + " Ä</label></p>";}
+		if(fernValues != 0){ newContent=newContent + "<p><label>Fernseher: " + fernValues + " Ä</label></p>";}
+		if(childrenseatValues != 0){ newContent=newContent + "<p><label>Kindersitze: " + childrenseatValues + " Stck. 0 Ä¨</label></p>";}
+		if(privatValues != 0){ newContent=newContent + "<p><label>Privatreise: " + privatValues + " Ä</label></p>";}
 		newContent=newContent + "<br /><hr>";
 	//Ende von Zusatzfeatures
 
 	newContent=newContent+ "<p><label>Kosten: " + 
 			sum() +
-			//pauschal f√ºr jede Reise (150+Gep√§ckvalues+Featurevalues) + //Rechnung 
-			" ‚Ç¨</label></p>" + "<br /><hr>";
+			//pauschal f¸r jede Reise (150+Gep‰ckvalues+Featurevalues) + //Rechnung 
+			" Ä¨</label></p>" + "<br /><hr>";
 
 	newContent=newContent+'<br /><br />'+
-                          '<button type="button" class="smallButton" onclick="setPageExtra()" style="margin-right:24px">Zur√ºck</button>'+
+                          '<button type="button" class="smallButton" onclick="setPageExtra()" style="margin-right:24px">Zur¸ck</button>'+
                           '<button type="button" class="smallButton" onclick="setPagePlatz()" style="margin-left:24px">Weiter</button>';
 	document.getElementById("content").innerHTML = newContent;        
   
@@ -525,18 +528,18 @@ function sumLuggage(){
 //Reservation Page/Booking page
  function setPagePlatz(){
 	var newContent = '';//Todo Fahrzeugauswahl
-	newContent = newContent + 'W√§hlen Sie Ihre Pl√§tze aus';
+	newContent = newContent + 'W‰hlen Sie Ihre Pl‰tze aus';
 	newContent = newContent +'<br />'
-				+'<button type="button" class="smallButton" onclick="setResrvation(1)" style="margin-right:24px" id="1">Platz w√§hlen</button>'
-				+'<button type="button" class="smallButton" onclick="setResrvation(2)" style="margin-right:24px" id="2">Platz w√§hlen</button>'
-				+'<button type="button" class="smallButton" onclick="setResrvation(3)" style="margin-right:24px" id="3">Platz w√§hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(1)" style="margin-right:24px" id="1">Platz w‰hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(2)" style="margin-right:24px" id="2">Platz w‰hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(3)" style="margin-right:24px" id="3">Platz w‰hlen</button>'
 				+'<br />'
-				+'<button type="button" class="smallButton" onclick="setResrvation(4)" style="margin-right:24px" id="4">Platz w√§hlen</button>'
-				+'<button type="button" class="smallButton" onclick="setResrvation(5)" style="margin-right:24px" id="5">Platz w√§hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(4)" style="margin-right:24px" id="4">Platz w‰hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(5)" style="margin-right:24px" id="5">Platz w‰hlen</button>'
 				+'<br />'
-				+'<button type="button" class="smallButton" onclick="setResrvation(6)" style="margin-right:24px" id="6">Platz w√§hlen</button>'
-				+'<button type="button" class="smallButton" onclick="setResrvation(7)" style="margin-right:24px" id="7">Platz w√§hlen</button>'
-				+'<button type="button" class="smallButton" onclick="setResrvation(8)" style="margin-right:24px" id="8">Platz w√§hlen</button>';
+				+'<button type="button" class="smallButton" onclick="setResrvation(6)" style="margin-right:24px" id="6">Platz w‰hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(7)" style="margin-right:24px" id="7">Platz w‰hlen</button>'
+				+'<button type="button" class="smallButton" onclick="setResrvation(8)" style="margin-right:24px" id="8">Platz w‰hlen</button>';
 				
 	newContent = newContent +'<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><hr>'
 				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">Paypal</button>'
@@ -544,7 +547,7 @@ function sumLuggage(){
 				+'<button type="button" class="smallButton" onclick="finishBooking()" style="margin-right:24px">√úberweisung</button>'
 				+'<br /><br /><br />'
 				+'<button type="button" class="smallButton" onclick="cancelBooking()" style="margin-right:24px">Abbruch</button>'
-				+'<button type="button" class="smallButton" onclick="confirmBooking()" style="margin-right:24px" id="9" disabled>Best√§tigen</button>';
+				+'<button type="button" class="smallButton" onclick="confirmBooking()" style="margin-right:24px" id="9" disabled>Best‰tigen</button>';
 	document.getElementById("content").innerHTML = newContent;   
   
     setPageNumber(6);
@@ -560,7 +563,7 @@ function sumLuggage(){
 	e.innerHTML = "Platz von Ihnen reserviert";
 	e.setAttribute('disabled','disabled');
 	reservation= reservation +1;
-	if(reservation == parseInt(traveller_count)){
+	if(reservation == parseInt(traveller_count)+ parseInt(traveller_count_kids)){
 		for(i=1;i<9;i++){
 			var e = document.getElementById(i);
 			e.setAttribute('disabled','disabled');
@@ -761,7 +764,13 @@ function setViaLocation(doc, index)
 function setTravellerCount(doc)
 {
     traveller_count=doc.value;
-} 
+}
+
+function setTravellerCountKids(doc)
+{
+    traveller_count_kids=doc.value;
+	childrenseatValues = doc.value;
+}  
    
 function setStartTime(doc)
 {
