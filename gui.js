@@ -226,7 +226,7 @@ function setPageNewJourney(focusDocument="", skipToBill=false)
   
     //add "via" destinations
     for(i=0; i<location_via.length+1; i++){
-        newContent=newContent + '<p><label>Zwischenstop</label><input type="text" id="via'+i+'" oninput="setViaLocation(this, '+i+')"';
+        newContent=newContent + '<p><label>Zwischenstopp</label><input type="text" id="via'+i+'" oninput="setViaLocation(this, '+i+')"';
         if(location_via.length>i && location_via[i].length>0){
             newContent=newContent + ' value="'+location_via[i]+'"';
         }
@@ -235,15 +235,15 @@ function setPageNewJourney(focusDocument="", skipToBill=false)
                    
     newContent=newContent+ 
                    '<br /><hr>' +
-                   '<p><label>Anzahl der Reisenden über 12 Jahre</label>' +
+                   '<p><label>Reisende über 12 Jahre</label>' +
                    '<input type="text" oninput="setTravellerCount(this)"></p>' + 
-				   '<p><label>Anzahl der Reisenden unter 12 Jahre</label>' +
+				           '<p><label>Reisende unter 12 Jahre</label>' +
                    '<input type="text" oninput="setTravellerCountKids(this)"></p>' + 
                    '<br /><hr>' +
                    '<p><label>Abfahrtszeit</label>' +
-                   '<input type="text" id="starttime" oninput="setStartTime(this)" onchange="setTravelTimeDestination()">Angabe: hh:mm</p>' +
+                   '<input type="datetime" id="starttime" oninput="setStartTime(this)"></p>' +
                    '<p><label>Ankunftszeit</label>' +
-                   '<input type="text" id="arrivaltime" oninput="setDestinationTime(this)" onchange="setTravelTimeStart()">Angabe: hh:mm</p>' +
+                   '<input type="datetime" id="arrivaltime" oninput="setDestinationTime(this)"></p>' +
                    '<br /><hr>' +
                    '<p><label>Anzahl der Pausen</label>' +
                    '<input type="text" style="width:5%" oninput="setBreakCount(this)"></p>' +
@@ -301,9 +301,6 @@ function checkInput(skipToBill){
 		alert(error);
 	}
 }
-
-
-//TODO: setPagePreviousJourneys(), setPageProfile(), setPageLuggage() and over 9000 other pages
 
 function setPageMap(){
 	
@@ -603,21 +600,26 @@ function cancelBooking(){
 	setPageStart();
 }
 
-function setTravelTimeDestination(){
+function setTravelTimeDestination(doc){
 	var directionsService = new google.maps.DirectionsService();
 	var duration_traveltime;
 	
 	var date = new Date();
-	date.setHours(time_start.substring(0,2), time_start.substring(3,5)); 
-	
+  if(doc.valueAsDate){
+     date=doc.valueAsDate;
+  }else{//non-chrome & opera: just hour:minutes
+	   date.setHours(time_start.substring(0,2), time_start.substring(3,5));
+  }
 	
 	var waypoints_array= [];
 	
 	for(var i= 0; i<location_via.length ;i++){
-		waypoints_array.push({
-			location:location_via[i],
-			stopover:true
-		});
+    if(location_via[i].length>0){
+  		waypoints_array.push({
+  			location:location_via[i],
+  			stopover:true
+  		});
+    }
 	}
 	
 	var request = {
@@ -629,8 +631,9 @@ function setTravelTimeDestination(){
 			
 		directionsService.route(request, function(result, status) {
 			if (status == google.maps.DirectionsStatus.OK) {
-				var duration_in_sec = result.routes[0].legs[0].duration.value;
-				date.setMinutes( date.getMinutes() + duration_in_sec/60 );
+				var duration_in_sec = result.routes[0].legs[0].duration.value;   
+        date.setTime(date.getTime()+duration_in_sec*1000);
+				/*date.setMinutes( date.getMinutes() + duration_in_sec/60 );
 				
 				var minutes;
 				
@@ -638,20 +641,24 @@ function setTravelTimeDestination(){
 					minutes = '0' + date.getMinutes().toString();
 				}else minutes = date.getMinutes().toString();
 				
-				time_destination = date.getHours() + ':' + minutes;	
+				time_destination = date.getHours() + ':' + minutes;*/
+        time_destination=date.toLocaleString();	
 				
-				document.getElementById("arrivaltime").value= date.getHours() + ':' + minutes;	
+				document.getElementById("arrivaltime").value = time_destination;	
 			}else { alert("Directions failed: "+status); }
 		});	
 }
 
-function setTravelTimeStart(){
+function setTravelTimeStart(doc){     
 	var directionsService = new google.maps.DirectionsService();
 	var duration_traveltime;
 	
-	var date = new Date();
-	date.setHours(time_destination.substring(0,2), time_destination.substring(3,5)); 
-	
+	var date = new Date();                                                  
+  if(doc.valueAsDate){
+     date=doc.valueAsDate;
+  }else{//non-chrome & opera: just hour:minutes
+	   date.setHours(time_destination.substring(0,2), time_destination.substring(3,5)); 
+  }
 	
 	var waypoints_array= [];
 	
@@ -672,7 +679,8 @@ function setTravelTimeStart(){
 		directionsService.route(request, function(result, status) {
 			if (status == google.maps.DirectionsStatus.OK) {
 				var duration_in_sec = result.routes[0].legs[0].duration.value;
-				date.setMinutes( date.getMinutes() - duration_in_sec/60 );
+        date.setTime(date.getTime()+duration_in_sec*1000);
+				/*date.setMinutes( date.getMinutes() - duration_in_sec/60 );
 				
 				var minutes;
 				
@@ -680,9 +688,10 @@ function setTravelTimeStart(){
 					minutes = '0' + date.getMinutes().toString();
 				}else minutes = date.getMinutes().toString();
 				
-				time_start = date.getHours() + ':' + minutes;;
+				time_start = date.getHours() + ':' + minutes;*/
+        time_start=date.toLocaleString();
 				
-				document.getElementById("starttime").value = date.getHours() + ':' + minutes;
+				document.getElementById("starttime").value = time_start;
 			}else { alert("Directions failed: "+status); }
 		});	
 		
@@ -803,7 +812,7 @@ function setStartTime(doc)
 	     document.getElementById("arrivaltime").readOnly=false;   
 	     document.getElementById("arrivaltime").disabled=false;
     }
-	time_destination = '20:00';	
+    setTravelTimeDestination(doc);
 	
 }
     
@@ -817,7 +826,7 @@ function setDestinationTime(doc)
 	     document.getElementById("starttime").readOnly=false;  
 	     document.getElementById("starttime").disabled=false;  
     }
-	time_start = '16:30';	
+    setTravelTimeStart(doc);     
 } 
    
 function setBreakCount(doc)
