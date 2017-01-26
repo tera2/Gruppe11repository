@@ -235,15 +235,15 @@ function setPageNewJourney(focusDocument="", skipToBill=false)
                    
     newContent=newContent+ 
                    '<br /><hr>' +
-                   '<p><label>Anzahl der Reisenden über 12</label>' +
+                   '<p><label>Anzahl der Reisenden über 12 Jahre</label>' +
                    '<input type="text" oninput="setTravellerCount(this)"></p>' + 
-				   '<p><label>Anzahl der Reisenden unter 12</label>' +
+				   '<p><label>Anzahl der Reisenden unter 12 Jahre</label>' +
                    '<input type="text" oninput="setTravellerCountKids(this)"></p>' + 
                    '<br /><hr>' +
                    '<p><label>Abfahrtszeit</label>' +
-                   '<input type="text" id="starttime" oninput="setStartTime(this)" onchange="setTravelTimeDestination()"></p>' +
+                   '<input type="text" id="starttime" oninput="setStartTime(this)" onchange="setTravelTimeDestination()">Angabe: hh:mm</p>' +
                    '<p><label>Ankunftszeit</label>' +
-                   '<input type="text" id="arrivaltime" oninput="setDestinationTime(this)" onchange="setTravelTimeStart()"></p>' +
+                   '<input type="text" id="arrivaltime" oninput="setDestinationTime(this)" onchange="setTravelTimeStart()">Angabe: hh:mm</p>' +
                    '<br /><hr>' +
                    '<p><label>Anzahl der Pausen</label>' +
                    '<input type="text" style="width:5%" oninput="setBreakCount(this)"></p>' +
