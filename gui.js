@@ -241,9 +241,9 @@ function setPageNewJourney(focusDocument="", skipToBill=false)
                    '<input type="text" oninput="setTravellerCountKids(this)"></p>' + 
                    '<br /><hr>' +
                    '<p><label>Abfahrtszeit</label>' +
-                   '<input type="datetime" id="starttime" oninput="setStartTime(this)"></p>' +
+                   '<input type="datetime-local" id="starttime" oninput="setStartTime(this)"></p>' +
                    '<p><label>Ankunftszeit</label>' +
-                   '<input type="datetime" id="arrivaltime" oninput="setDestinationTime(this)"></p>' +
+                   '<input type="datetime-local" id="arrivaltime" oninput="setDestinationTime(this)"></p>' +
                    '<br /><hr>' +
                    '<p><label>Anzahl der Pausen</label>' +
                    '<input type="text" style="width:5%" oninput="setBreakCount(this)"></p>' +
@@ -605,8 +605,8 @@ function setTravelTimeDestination(doc){
 	var duration_traveltime;
 	
 	var date = new Date();
-  if(doc.valueAsDate){
-     date=doc.valueAsDate;
+  if((!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0 || (!!window.chrome && !!window.chrome.webstore)){
+     date=new Date(doc.value);  
   }else{//non-chrome & opera: just hour:minutes
 	   date.setHours(time_start.substring(0,2), time_start.substring(3,5));
   }
@@ -631,7 +631,7 @@ function setTravelTimeDestination(doc){
 			
 		directionsService.route(request, function(result, status) {
 			if (status == google.maps.DirectionsStatus.OK) {
-				var duration_in_sec = result.routes[0].legs[0].duration.value;   
+				var duration_in_sec = result.routes[0].legs[0].duration.value; 
         date.setTime(date.getTime()+duration_in_sec*1000);
 				/*date.setMinutes( date.getMinutes() + duration_in_sec/60 );
 				
@@ -642,8 +642,8 @@ function setTravelTimeDestination(doc){
 				}else minutes = date.getMinutes().toString();
 				
 				time_destination = date.getHours() + ':' + minutes;*/
-        time_destination=date.toLocaleString();	
-				
+        var tHours=date.getHours()+(date.getTimezoneOffset()/60);
+        time_destination=(date.getFullYear()+"-"+(date.getMonth()+1<10?"0":"")+(date.getMonth()+1)+"-"+(date.getDate()<10?"0":"")+date.getDate()+"T"+(tHours<10?"0":"")+tHours+":"+(date.getMinutes()<10?"0":"")+date.getMinutes());	
 				document.getElementById("arrivaltime").value = time_destination;	
 			}else { alert("Directions failed: "+status); }
 		});	
@@ -653,9 +653,9 @@ function setTravelTimeStart(doc){
 	var directionsService = new google.maps.DirectionsService();
 	var duration_traveltime;
 	
-	var date = new Date();                                                  
-  if(doc.valueAsDate){
-     date=doc.valueAsDate;
+	var date = new Date();          
+  if((!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0 || (!!window.chrome && !!window.chrome.webstore)){
+     date=new Date(doc.value);
   }else{//non-chrome & opera: just hour:minutes
 	   date.setHours(time_destination.substring(0,2), time_destination.substring(3,5)); 
   }
@@ -678,8 +678,8 @@ function setTravelTimeStart(doc){
 			
 		directionsService.route(request, function(result, status) {
 			if (status == google.maps.DirectionsStatus.OK) {
-				var duration_in_sec = result.routes[0].legs[0].duration.value;
-        date.setTime(date.getTime()+duration_in_sec*1000);
+				var duration_in_sec = result.routes[0].legs[0].duration.value;    
+        date.setTime(date.getTime()-duration_in_sec*1000);
 				/*date.setMinutes( date.getMinutes() - duration_in_sec/60 );
 				
 				var minutes;
@@ -688,8 +688,9 @@ function setTravelTimeStart(doc){
 					minutes = '0' + date.getMinutes().toString();
 				}else minutes = date.getMinutes().toString();
 				
-				time_start = date.getHours() + ':' + minutes;*/
-        time_start=date.toLocaleString();
+				time_start = date.getHours() + ':' + minutes;*/     
+        var tHours=date.getHours()+(date.getTimezoneOffset()/60);
+        time_start=(date.getFullYear()+"-"+(date.getMonth()+1<10?"0":"")+(date.getMonth()+1)+"-"+(date.getDate()<10?"0":"")+date.getDate()+"T"+(tHours<10?"0":"")+tHours+":"+(date.getMinutes()<10?"0":"")+date.getMinutes());	
 				
 				document.getElementById("starttime").value = time_start;
 			}else { alert("Directions failed: "+status); }
