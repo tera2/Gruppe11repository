@@ -290,14 +290,23 @@ function checkInput(skipToBill){
 		error += 'Ankunftszeit nicht angegeben\n';
 		nextPage = false;		
 	}
-	if(nextPage == true){
+	if(nextPage == true){  
+    if(time_start.search("T")!=-1){
+        var date = new Date(time_start);
+        date.setHours(date.getHours()+(date.getTimezoneOffset()/60));    
+        time_start=date.toLocaleString();
+    }        
+    if(time_destination.search("T")!=-1){  
+        var date = new Date(time_destination);
+        date.setHours(date.getHours()+(date.getTimezoneOffset()/60));
+        time_destination=date.toLocaleString();
+    }
 		if(skipToBill == true){
 			setPageBill();
 		}else{
 			setPageMap();
 		}
 	}else{
-		
 		alert(error);
 	}
 }
@@ -311,7 +320,7 @@ function setPageMap(){
 	
 	newContent += '<div style="height:400px; width:600px; margin: 0 auto;"><div id=map ></div></div>';
 	
-	newContent+= '<div id="travel_times" ><label>Abfahrt: ' + time_start + ' Uhr ' + 'Ankunft: ' + time_destination + ' Uhr </label>' +
+	newContent+= '<div id="travel_times" ><label>Abfahrt: ' + time_start + ' Uhr<br /></label><label>' + 'Ankunft: ' + time_destination + ' Uhr </label>' +
 					'</div>';
 	
 	newContent = newContent + '<br /><br />'+
@@ -359,23 +368,6 @@ function setPageMap(){
 
     setPageNumber(2);
 }
-
-
-
-	
-	/*var newContent = "<iframe <iframe width=" + "600" + " height=" +"450" + " frameborder=" + "0" 
-  	+ " src=" +"https://www.google.com/maps/embed?pb=!1m34!1m12!1m3!1d1259737.542931774!2d10.44684633767563!3d51.92620310268749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m19!3e0!4m5!1s0x47b00b514d494f85%3A0x425ac6d94ac4720!2sHannover!3m2!1d52.375891599999996!2d9.7320104!4m5!1s0x47a6f818200f2c73%3A0x93df80d2b9b4f552!2sLeipzig!3m2!1d51.3396955!2d12.3730747!4m5!1s0x47a84e373f035901%3A0x42120465b5e3b70!2sBerlin!3m2!1d52.520006599999995!2d13.404954!5e0!3m2!1sde!2sde!4v1483628183819" 
-  	+ " allowfullscreen></iframe>";
-  	
-  	newContent = newContent + "<label>Abfahrt: "  + time_start + " Uhr " +
-  			"Ankunft: "+ time_destination + " Uhr " + "</label>" 
-  		
-  	
-     
-
-}*/
-
-
 
 function setPageBaggage(skipToBill=false){
 	var newContent = 	"<div><h1>Gepäck</h1></div>"					
@@ -602,11 +594,13 @@ function cancelBooking(){
 
 function setTravelTimeDestination(doc){
 	var directionsService = new google.maps.DirectionsService();
-	var duration_traveltime;
+	var duration_traveltime;       
+  var nonDatefield=true;
 	
 	var date = new Date();
   if((!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0 || (!!window.chrome && !!window.chrome.webstore)){
-     date=new Date(doc.value);  
+     date=new Date(doc.value);   
+     nonDatefield=false;
   }else{//non-chrome & opera: just hour:minutes
 	   date.setHours(time_start.substring(0,2), time_start.substring(3,5));
   }
@@ -642,9 +636,15 @@ function setTravelTimeDestination(doc){
 				}else minutes = date.getMinutes().toString();
 				
 				time_destination = date.getHours() + ':' + minutes;*/
-        var tHours=date.getHours()+(date.getTimezoneOffset()/60);
-        time_destination=(date.getFullYear()+"-"+(date.getMonth()+1<10?"0":"")+(date.getMonth()+1)+"-"+(date.getDate()<10?"0":"")+date.getDate()+"T"+(tHours<10?"0":"")+tHours+":"+(date.getMinutes()<10?"0":"")+date.getMinutes());	
-				document.getElementById("arrivaltime").value = time_destination;	
+        date.setHours(date.getHours()+(date.getTimezoneOffset()/60));
+                                                                 
+        time_destination=date.toLocaleString();	
+				if(nonDatefield==false){
+            document.getElementById("arrivaltime").value = convertToDatefield(time_destination);
+        }else{
+				    document.getElementById("arrivaltime").value = time_destination;
+        }
+        	
 			}else { alert("Directions failed: "+status); }
 		});	
 }
@@ -652,10 +652,12 @@ function setTravelTimeDestination(doc){
 function setTravelTimeStart(doc){     
 	var directionsService = new google.maps.DirectionsService();
 	var duration_traveltime;
+  var nonDatefield=true;
 	
 	var date = new Date();          
   if((!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0 || (!!window.chrome && !!window.chrome.webstore)){
      date=new Date(doc.value);
+     nonDatefield=false;
   }else{//non-chrome & opera: just hour:minutes
 	   date.setHours(time_destination.substring(0,2), time_destination.substring(3,5)); 
   }
@@ -689,14 +691,24 @@ function setTravelTimeStart(doc){
 				}else minutes = date.getMinutes().toString();
 				
 				time_start = date.getHours() + ':' + minutes;*/     
-        var tHours=date.getHours()+(date.getTimezoneOffset()/60);
-        time_start=(date.getFullYear()+"-"+(date.getMonth()+1<10?"0":"")+(date.getMonth()+1)+"-"+(date.getDate()<10?"0":"")+date.getDate()+"T"+(tHours<10?"0":"")+tHours+":"+(date.getMinutes()<10?"0":"")+date.getMinutes());	
-				
-				document.getElementById("starttime").value = time_start;
+        date.setHours(date.getHours()+(date.getTimezoneOffset()/60));
+                                                    
+        time_start=date.toLocaleString();	
+				if(nonDatefield==false){
+            document.getElementById("starttime").value = convertToDatefield(time_start);
+        }else{
+				    document.getElementById("starttime").value = time_start;
+        }
 			}else { alert("Directions failed: "+status); }
 		});	
 		
 	
+}
+
+function convertToDatefield(date)
+{
+    date = new Date(date);
+    return (date.getFullYear()+"-"+(date.getMonth()+1<10?"0":"")+(date.getMonth()+1)+"-"+(date.getDate()<10?"0":"")+date.getDate()+"T"+(date.getHours()<10?"0":"")+date.getHours()+":"+(date.getMinutes()<10?"0":"")+date.getMinutes());
 }
                  
 //---INPUT-HELPER-FUNCTIONS---//
@@ -804,8 +816,8 @@ function setTravellerCountKids(doc)
 }  
    
 function setStartTime(doc)
-{
-    time_start=doc.value;//TODO: sanity check
+{     
+    time_start=doc.value;
     if(doc.value.length>0){//block destination time
 	     document.getElementById("arrivaltime").readOnly=true;   
 	     document.getElementById("arrivaltime").disabled=true;
@@ -814,12 +826,11 @@ function setStartTime(doc)
 	     document.getElementById("arrivaltime").disabled=false;
     }
     setTravelTimeDestination(doc);
-	
 }
     
 function setDestinationTime(doc)
 {
-    time_destination=doc.value;//TODO: sanity check
+    time_destination=doc.value;
     if(doc.value.length>0){//block start time
 	     document.getElementById("starttime").readOnly=true;  
 	     document.getElementById("starttime").disabled=true;  
