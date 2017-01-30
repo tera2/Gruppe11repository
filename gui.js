@@ -409,9 +409,9 @@ function setPageBaggage(skipToBill=false){
 						+"</p>"
 						
 						
-						+"<p title='Hundebox wird nicht gestellt!'><label><font size='5'>Hundebox</font><font size='2'> /Stk. "+PRICE_DOGBOX+",-</font></label>"
+						+"<p><label><font size='5'>Hundebox</font><font size='2'> /Stk. "+PRICE_DOGBOX+",- </font><img src='frage.jpg' title='Hundebox wird nicht gestellt' alt='zzzzz' width='20' height='20'></label>"
 						+"<input type='number' oninput='setDogBoxValues(this) 'min='0' max='5' value='"+dogBoxValues+"'>"
-						+"</p>"						
+						+"</p>"																		
 						
             //TODO: SETTER
 						+"<p><label><font size='5'>Sonstiges</font><font size='2'> /Stk. "+PRICE_MISC+",-</font></label>"
@@ -444,7 +444,7 @@ function setPageExtra(){
 						+"<input type='checkbox' onchange='setDoseValues(this)' "+(doseValues!=0 ? "checked" : "")+">"
 						+"</p>"
 						
-						+"<p><label><font size='5'>Mini-Bar</font></label>"
+						+"<p><label><font size='5'>Mini-Bar </font><img src='frage.jpg' title='Bezahlung bei Entnahme' alt='zzzzz' width='20' height='20'></label>"
 						+"<input type='checkbox' onchange='setBarValues(this)' "+(barValues!=0 ? "checked" : "")+">"					
 						
 						+"</p>"
@@ -457,7 +457,7 @@ function setPageExtra(){
 						+"<input type='number' oninput='setChildrenseatValues(this)' min='0' max='3' value='"+childrenseatValues+"'>"
 						+"</p>"*/
 						
-						+"<p title='Es besteht die Möglichkeit, dass weitere Fahrgäste ihnen der Reise zugeteilt werden. Ihre Reisedauer wird dabei nicht beeinflusst.'><label><font size='5'>Reise veröffentlichen</font><font size='2'> "+PRICE_PRIVATE+",-</font></label>"
+						+"<p><label><font size='5'>Privatreise <img src='frage.jpg' title='Es werden ihnen keine weiteren Fahrgäste zugeteilt.' alt='zzzzz' width='20' height='20'></font><font size='2'> "+PRICE_PRIVATE+",-</font></label>"
 						+"<input type='checkbox' onchange='setPrivateValues(this)' "+(privatValues!=0 ? "checked" : "")+">"
 						+"</p>"	
 
@@ -503,7 +503,7 @@ function setPageBill(){
 	//Ende von Zusatzoptionen
 
 	//Variablen für Zusatzfeatures
-		newContent=newContent + "<p label='Bezahlung erfolgt vor Ort in Bar'><label>Minibar: " + (barValues? "Ja" : "Nein") + "</label>" +
+		newContent=newContent + "<p><label>Minibar: " + (barValues? "Ja" : "Nein") + "</label>" +
 				'<button type="button" class="smallButton" onclick="setPageExtra()" style="float: right">Ändern</button></p>';
 		if(wlanValues != 0){ newContent=newContent + "<p><label>Wlan: " + wlanValues + " €</label></p>";}
 		if(doseValues != 0){ newContent=newContent + "<p><label>Steckdosen: " + doseValues + " €</label></p>";}
